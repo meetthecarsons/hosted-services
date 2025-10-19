@@ -1,6 +1,8 @@
 services:
   bedrock:
     image: itzg/minecraft-bedrock-server
+    pull_policy: always
+    restart: unless-stopped
     environment:
       EULA: "TRUE"
     ports:
