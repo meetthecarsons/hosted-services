@@ -30,6 +30,8 @@ services:
     restart: always
     healthcheck:
       disable: false
+    devices:
+      - /dev/dri:/dev/dri
 
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -69,10 +71,6 @@ services:
       - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
     shm_size: 128mb
     restart: always
-
-  quicksync:
-    devices:
-      - /dev/dri:/dev/dri
 
 volumes:
   model-cache:
