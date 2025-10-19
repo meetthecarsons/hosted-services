@@ -1,0 +1,26 @@
+services:
+  mealie:
+    image: ghcr.io/mealie-recipes/mealie:v3.3.2 # 
+    container_name: mealie
+    restart: always
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "food"
+    ports:
+        - "9925:9000" # 
+    deploy:
+      resources:
+        limits:
+          memory: 1000M # 
+    volumes:
+      - mealie-data:/app/data/
+    environment:
+      # Set Backend ENV Variables Here
+      ALLOW_SIGNUP: "false"
+      PUID: 1000
+      PGID: 1000
+      TZ: America/Anchorage
+      BASE_URL: https://food.eland-wyrm.ts.net
+
+volumes:
+  mealie-data:
