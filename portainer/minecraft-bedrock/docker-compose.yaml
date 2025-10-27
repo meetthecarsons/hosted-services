@@ -8,6 +8,6 @@ services:
     ports:
       - "19132:19132/udp"
     volumes:
-      - /opt/data/bedrock:/data
+      - /opt/data/minecraft-bedrock/data:/data
     stdin_open: true
     tty: true
