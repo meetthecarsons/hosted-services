@@ -1,0 +1,166 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    pull_policy: always
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - "8081:8081"  # qBittorrent Web UI
+      - "8989:8989"  # Sonarr
+      - "8990:8990"  # Sonarr-anime
+      - "7878:7878"  # Radarr
+      - "7879:7879"  # Radarr-anime
+      - "9696:9696"  # Prowlarr
+      - "6767:6767"  # Bazarr
+    environment:
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=wireguard
+      - BLOCK_MALICIOUS=off
+      - WIREGUARD_PRIVATE_KEY=wHQ6jXv2gOauVxC4Wv9lefJBJY6FPsR+7/O1zYVaLW0=
+      - WIREGUARD_ADDRESSES=10.2.0.2/32
+
+      - VPN_PORT_FORWARDING=on
+      - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8081/api/v2/app/setPreferences 2>&1'
+      - SERVER_CITIES=Seattle
+    restart: unless-stopped
+    # GLUETUN: VPN tunnel - routes all container traffic through VPN for privacy
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    pull_policy: always
+    container_name: qbittorrent
+    network_mode: "service:gluetun"  # Uses gluetun's VPN network
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+      - WEBUI_PORT=8081
+    volumes:
+      - /mnt/fast-pool-01/appdata/qbittorrent/config:/config
+      - /mnt/bulk-pool-01/data/torrents:/data/torrents
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+    # QBITTORRENT: Torrent client - downloads files from torrent trackers
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    pull_policy: always
+    container_name: radarr
+    network_mode: "service:gluetun"  # Uses gluetun's VPN network
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /mnt/fast-pool-01/appdata/radarr/config:/config
+      - /mnt/bulk-pool-01/data:/data
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+    # RADARR: Movie manager - automatically finds, downloads, and organizes movies
+
+  radarr-anime:
+    image: lscr.io/linuxserver/radarr:latest
+    pull_policy: always
+    container_name: radarr-anime
+    network_mode: "service:gluetun"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /mnt/fast-pool-01/appdata/radarr-anime/config:/config
+      - /mnt/bulk-pool-01/data:/data
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    pull_policy: always
+    container_name: sonarr
+    network_mode: "service:gluetun"  # Uses gluetun's VPN network
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /mnt/fast-pool-01/appdata/sonarr/config:/config
+      - /mnt/bulk-pool-01/data:/data
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+    # SONARR: TV show manager - automatically finds, downloads, and organizes TV shows
+
+  sonarr-anime:
+    image: lscr.io/linuxserver/sonarr:latest
+    pull_policy: always
+    container_name: sonarr-anime
+    network_mode: "service:gluetun"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /mnt/fast-pool-01/appdata/sonarr-anime/config:/config
+      - /mnt/bulk-pool-01/data:/data
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    pull_policy: always
+    container_name: prowlarr
+    network_mode: "service:gluetun"  # Uses gluetun's VPN network
+
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /mnt/fast-pool-01/appdata/prowlarr/config:/config
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+    # PROWLARR: Indexer manager - centralizes torrent tracker accounts for Sonarr/Radarr
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    pull_policy: always
+    container_name: bazarr
+    network_mode: "service:gluetun"  # Uses gluetun's VPN network
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Los_Angeles
+    volumes:
+      - /mnt/fast-pool-01/appdata/bazarr/config:/config
+      - /mnt/bulk-pool-01/data:/data:ro
+    depends_on:
+      - gluetun
+      - sonarr
+      - radarr
+    restart: unless-stopped
+    # BAZARR: Subtitle downloader - connects to Sonarr/Radarr and fetches subtitles
+
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr:latest
+    pull_policy: always
+    container_name: recyclarr
+    network_mode: "service:gluetun"  # Uses gluetun's VPN network
+    environment:
+      - TZ=America/Los_Angeles
+    volumes:
+      - /mnt/fast-pool-01/appdata/recyclarr/config:/config
+      # Mount Sonarr/Radarr configs for database access (optional but recommended)
+      - /mnt/fast-pool-01/appdata/sonarr/config:/sonarr:ro
+      - /mnt/fast-pool-01/appdata/radarr/config:/radarr:ro
+      - /mnt/fast-pool-01/appdata/sonarr-anime/config:/sonarr-anime:ro
+      - /mnt/fast-pool-01/appdata/radarr-anime/config:/radarr-anime:ro
+    restart: "no"  # Run on-demand or via cron, not always running
+    # RECYCLARR: Automates Trash Guide custom format updates for Sonarr/Radarr
