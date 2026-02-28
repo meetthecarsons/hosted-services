@@ -11,9 +11,6 @@ name: immich
 
 services:
   immich-server:
-    labels:
-      tsdproxy.name: photos
-      tsdproxy.enable: true
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     volumes:

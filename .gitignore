@@ -1,0 +1,6 @@
+# ignore environment files and local data for each stack
+stacks/*/.env
+stacks/*/.env.local
+
+# ignore any data directories inside stacks
+stacks/*/data/

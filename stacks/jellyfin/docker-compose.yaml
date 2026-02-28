@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  jellyfin:
+    image: linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000 # Replace with your user ID
+      - PGID=1000 # Replace with your group ID
+      - TZ=America/Los_Angeles # Replace with your timezone
+    volumes:
+      - /mnt/fast-pool-01/appdata/jellyfin/config:/config # Replace with your config path
+      - /mnt/fast-pool-01/appdata/jellyfin/cache:/cache # Replace with your cache path
+      - /mnt/bulk-pool-01/data/media:/data # Replace with your media path
+    devices:
+      - /dev/dri:/dev/dri # Pass the Intel GPU device
+    group_add:
+      - "44" # Add the 'video' group (or the group owning /dev/dri/renderD128)
+    networks:
+      - web
+    ports:
+      - 8096:8096 # Web UI
+      - 8920:8920 # HTTPS (optional)
+      - 7359:7359/udp # Auto-discovery
+      - 1900:1900/udp # DLNA (optional)
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    container_name: caddy
+    ports:
+      # Map host port 8095 -> container 80 (HTTP), and 8096 -> container 443 (HTTPS).
+      # This allows you to expose Caddy on non-standard host ports. For
+      # Let's Encrypt to obtain certificates using HTTP-01 or TLS-ALPN-01,
+      # your router's public ports 80 and 443 must forward to these host
+      # ports (see README). Alternatively use a DNS challenge provider.
+      - "8095:80"
+      - "8096:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  web:
+    driver: bridge

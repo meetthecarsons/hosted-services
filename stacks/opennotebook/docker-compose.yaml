@@ -13,15 +13,9 @@ services:
     restart: always
   open_notebook:
     image: lfnovo/open_notebook:v1-latest
-    labels:
-      tsdproxy.enable: "true"
-      tsdproxy.name: "notebook"
-      tsdproxy.container_port: "8502"
     ports:
       - "8502:8502"
       - "5055:5055"
-    env_file:
-      - ./docker.env
     depends_on:
       - surrealdb
     volumes:

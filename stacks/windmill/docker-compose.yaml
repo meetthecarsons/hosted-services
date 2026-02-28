@@ -32,11 +32,6 @@ services:
   windmill_server:
     image: ${WM_IMAGE}
     pull_policy: always
-    labels:
-      tsdproxy.name: "windmill"
-      tsdproxy.enable: "true"
-      tsdproxy.ephemeral: "false"
-      tsdproxy.container_port: "8000"
     deploy:
       replicas: 1
     restart: unless-stopped

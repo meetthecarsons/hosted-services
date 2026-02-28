@@ -1,0 +1,18 @@
+version: '3'
+services:
+  nextcloud-aio-mastercontainer:
+    image: nextcloud/all-in-one:latest
+    restart: always
+    ports:
+      - 80:80 # For initial setup and HTTP access
+      - 443:443 # For HTTPS access (managed by AIO's Caddy or an external reverse proxy)
+      - 8080:8080 # For the AIO management interface
+    environment:
+      - NEXTCLOUD_DATADIR=/mnt/ncdata # Adjust if you want to store data elsewhere
+      # - NEXTCLOUD_HOST=your-domain.com # Uncomment and set your domain if not using a reverse proxy
+      # - APACHE_PORT=11000 # Example for custom internal port if needed
+    volumes:
+      - /opt/app/containers/nextcloud/config:/mnt/docker-aio-config # Persistent configuration for the master container
+      - /opt/app/containers/nextcloud/data:/mnt/ncdata # Bind mount for Nextcloud data
+      # - /path/to/your/nextcloud/backup:/mnt/backup # Optional: for AIO backups
+    container_name: nextcloud-aio-mastercontainer

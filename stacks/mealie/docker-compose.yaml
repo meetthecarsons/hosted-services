@@ -3,9 +3,6 @@ services:
     image: ghcr.io/mealie-recipes/mealie:v3.3.2 # 
     container_name: mealie
     restart: always
-    labels:
-      tsdproxy.enable: "true"
-      tsdproxy.name: "food"
     ports:
         - "9925:9000" # 
     deploy:
