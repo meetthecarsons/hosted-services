@@ -18,18 +18,31 @@ Files
 - `Caddyfile` - **legacy** reverse-proxy configuration; the active proxy lives
   in `stacks/reverse-proxy` now.  You can remove this file if you don’t need
   the old configuration.
+ - `docker-compose.yaml` - services for `jellyfin`.
+ - `Caddyfile` - **legacy** reverse-proxy configuration; the active proxy lives
+    in `stacks/reverse-proxy` now.  You can remove this file if you don’t need
+    the old configuration.
 
 Quick start (tailnet/local use)
-1. Bring up the stack from this directory:
+1. Copy `.env.example` to `.env` and adjust the values to match your host
+   (IDs, timezone, and path locations).
+
+```sh
+cp .env.example .env
+```
+
+2. Bring up the stack from this directory (Compose will automatically load
+   variables from `.env`):
 
 ```bash
 docker compose up -d
 ```
 
-2. Authenticate the `tailscale` service (see Tailnet access section below).
-3. Points clients either at the internal proxy hostnames or directly to
-   `ds-s-01.lan.internal:8096` while they remain on the LAN.
-4. No router port-forwards are required unless you later decide to expose
+3. Ensure `tailscaled` is running on the host (see Tailnet access section below);
+   no Tailscale container is required for this stack.
+4. Points clients either at the internal proxy hostnames or directly to
+   `ds-s-01.lan.internal:${JELLYFIN_PORT:-8096}` while they remain on the LAN.
+5. No router port-forwards are required unless you later decide to expose
    the service publicly.
 
 The legacy "Expose via Caddy/Let's Encrypt" instructions are further down
@@ -39,15 +52,25 @@ for historical curiosity.
 
 ### Tailnet access (optional)
 
-If you want Jellyfin accessible only on your Tailscale mesh, a `tailscale` service is included in the compose. After bringing the stack up:
+Jellyfin can be reached over your existing host-level Tailscale daemon.  No
+container is required: the proxy (or any other service) can simply listen on
+the host’s Tailscale IP/port and forward to the internal network.
 
-```sh
-# authenticate the host and give it a magic-dns name (e.g. jelly)
-docker exec tailscale tailscale up --authkey=tskey-... --hostname=jelly
+To use this pattern, ensure `tailscaled` is running on the host, then deploy
+and configure the reverse proxy as described in the proxy section below.  The
+proxy may run in host mode or on both the host and the `internal` network so
+it can access the Tailscale interface.
 
-# optionally expose the Jellyfin port on the tailnet
-docker exec tailscale tailscale serve jelly.<your-tailnet>.ts.net=8096
-```
+Clients on the tailnet connect to whatever hostname the proxy advertises
+(e.g. `jelly.<your-tailnet>.ts.net`) and traffic will be routed internally to
+Jellyfin.  There is no need to add any Tailscale environment variables to the
+`jellyfin` compose file when using the host daemon.
+
+> If you do run a Tailscale container for some reason, be aware that only one
+> daemon may manage the `tailscale0` interface at a time; multiple containers
+> will conflict.
+
+For general guidance on Tailscale, consult the main repository README.
 
 Clients on the tailnet can then reach the server as `https://jelly.<your-tailnet>.ts.net` without opening public ports.  This works equally well from a laptop, phone, or a Tailscale‑capable TV – once the device is logged into your tailnet the app will talk directly to the server.  See the main repo README for general tailscale guidance.
 

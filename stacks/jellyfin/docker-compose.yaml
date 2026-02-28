@@ -1,27 +1,19 @@
 version: "3.8"
 
 services:
-  tailscale:
-    image: tailscale/tailscale:latest
-    container_name: tailscale
-    network_mode: "host"           # allows the daemon to configure the host interface
-    privileged: true
-    volumes:
-      - /var/lib/tailscale:/var/lib/tailscale
-    command: tailscaled
-    restart: unless-stopped
+  # Tailscale is managed at the host level; do not run another daemon here.
 
   jellyfin:
     image: linuxserver/jellyfin:latest
     container_name: jellyfin
     environment:
-      - PUID=1000 # Replace with your user ID
-      - PGID=1000 # Replace with your group ID
-      - TZ=America/Los_Angeles # Replace with your timezone
+      - PUID=${PUID:-1000} # user ID (override in .env)
+      - PGID=${PGID:-1000} # group ID
+      - TZ=${TZ:-America/Los_Angeles}
     volumes:
-      - /mnt/fast-pool-01/appdata/jellyfin/config:/config # Replace with your config path
-      - /mnt/fast-pool-01/appdata/jellyfin/cache:/cache # Replace with your cache path
-      - /mnt/bulk-pool-01/data/media:/data # Replace with your media path
+      - ${JELLYFIN_CONFIG:-/mnt/fast-pool-01/appdata/jellyfin/config}:/config
+      - ${JELLYFIN_CACHE:-/mnt/fast-pool-01/appdata/jellyfin/cache}:/cache
+      - ${JELLYFIN_MEDIA:-/mnt/bulk-pool-01/data/media}:/data
     devices:
       - /dev/dri:/dev/dri # Pass the Intel GPU device
     group_add:
@@ -29,7 +21,7 @@ services:
     networks:
       - internal
     ports:
-      - 8096:8096  # allow direct LAN clients to reach Jellyfin
+      - "${JELLYFIN_PORT:-8096}:8096"  # allow direct LAN clients to reach Jellyfin
     restart: unless-stopped
 
 
