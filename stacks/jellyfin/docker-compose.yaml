@@ -28,30 +28,10 @@ services:
       - "44" # Add the 'video' group (or the group owning /dev/dri/renderD128)
     networks:
       - internal
-    restart: unless-stopped
-
-  caddy:
-    image: caddy:2
-    restart: unless-stopped
-    container_name: caddy
     ports:
-      # Map host port 8095 -> container 80 (HTTP), and 8096 -> container 443 (HTTPS).
-      # This allows you to expose Caddy on non-standard host ports. For
-      # Let's Encrypt to obtain certificates using HTTP-01 or TLS-ALPN-01,
-      # your router's public ports 80 and 443 must forward to these host
-      # ports (see README). Alternatively use a DNS challenge provider.
-      - "8095:80"
-      - "8096:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    networks:
-      - web
+      - 8096:8096  # allow direct LAN clients to reach Jellyfin
+    restart: unless-stopped
 
-volumes:
-  caddy_data:
-  caddy_config:
 
 networks:
   internal:

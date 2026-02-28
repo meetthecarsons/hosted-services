@@ -14,10 +14,10 @@ Overview
   with `caddy` as a reverse-proxy when Internet exposure is required.
 
 Files
-- `docker-compose.yaml` - services for `jellyfin` (plus `tailscale` and a
-  proxy if enabled).
-- `Caddyfile` - reverse-proxy configuration; originally used for public
-  hostnames, now mostly for the internal `*.svc.internal` domain.
+- `docker-compose.yaml` - services for `jellyfin` (plus `tailscale`).
+- `Caddyfile` - **legacy** reverse-proxy configuration; the active proxy lives
+  in `stacks/reverse-proxy` now.  You can remove this file if you don’t need
+  the old configuration.
 
 Quick start (tailnet/local use)
 1. Bring up the stack from this directory:
@@ -73,11 +73,11 @@ Configure the proxy's `Caddyfile` (or equivalent) with entries for each
 service, e.g. `jelly.svc.internal` → `jellyfin:8096`.  Clients on your LAN can
 use DNS or `/etc/hosts` to resolve `*.svc.internal` to the proxy host.  
 
-> **Temporary compatibility:** if you still have devices pointing directly at
-> `ds-s-01.lan.internal:8096`, add a rule in the proxy (shown above) to
-> forward that port to Jellyfin. Once clients are switched over you can remove
-> the rule.
-
+> **Temporary compatibility:** legacy LAN clients can still hit the
+> server directly on port 8096 because the Jellyfin service exposes that port
+> on the host. You do not need a proxy rule. When everything is on
+> `*.svc.internal` or using Tailscale you can remove the host mapping if you
+> wish.
 With this pattern you can add other stacks (Sonarr, Radarr, etc.) by simply
 attaching them to the `internal` network and adding proxy rules; no port
 mappings are required in their compose files.

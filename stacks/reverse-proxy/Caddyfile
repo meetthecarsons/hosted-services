@@ -9,10 +9,3 @@
     tls internal
 }
 
-# temporary passthrough for existing clients pointing directly at the
-# server's hostname and port.  This allows ds-s-01.lan.internal:8096 to still
-# reach Jellyfin while you migrate devices to the svc.internal names.
-
-http://ds-s-01.lan.internal:8096 {
-    reverse_proxy jellyfin:8096
-}
