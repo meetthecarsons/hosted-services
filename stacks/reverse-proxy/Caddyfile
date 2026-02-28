@@ -1,0 +1,18 @@
+# Wildcard rule for services ending in .svc.internal
+# the backend name is the hostname without the suffix
+
+*.svc.internal {
+    reverse_proxy {http.request.host.strip_suffix(".svc.internal")}
+
+    # use Caddy's internal CA; clients must trust it or you can omit for
+    # plaintext HTTP on the LAN
+    tls internal
+}
+
+# temporary passthrough for existing clients pointing directly at the
+# server's hostname and port.  This allows ds-s-01.lan.internal:8096 to still
+# reach Jellyfin while you migrate devices to the svc.internal names.
+
+http://ds-s-01.lan.internal:8096 {
+    reverse_proxy jellyfin:8096
+}

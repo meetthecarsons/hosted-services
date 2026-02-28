@@ -1,31 +1,86 @@
-Exposing Jellyfin via Caddy (Let's Encrypt)
+Accessing Jellyfin on the tailnet and local LAN
 
 > **Note:** this directory has been moved to `stacks/jellyfin` in the repository layout.
+>
+> Historically the stack used Caddy with Let's Encrypt to expose Jellyfin to the
+> public Internet.  In the current deployment we no longer publish it on the
+> WAN; remote clients connect over Tailscale and local clients use an internal
+> reverse proxy.  The old Internet‑exposure instructions remain below for
+> reference but can be ignored unless you intentionally want to re‑enable
+> public access.
 
 Overview
-- This folder contains a docker-compose setup for `jellyfin` + `caddy` as a reverse-proxy.
-- `caddy` will obtain TLS certificates automatically from Let's Encrypt for the hostname you configure in the `Caddyfile`.
-
-Preconditions
-- You must own a DNS name and be able to create an A record for the hostname you choose (e.g. `jellyfin.yourdomain.com`) that points to your home's public IP.
-- Your router must forward ports `80` and `443` to the machine running this compose — or, see the section below if you want to expose Caddy on non-standard host ports.
+- This folder contains a docker-compose setup for `jellyfin`, optionally
+  with `caddy` as a reverse-proxy when Internet exposure is required.
 
 Files
-- `docker-compose.yaml` - services for `jellyfin` and `caddy`.
-- `Caddyfile` - reverse-proxy configuration; replace `YOUR_DOMAIN` with your host.
+- `docker-compose.yaml` - services for `jellyfin` (plus `tailscale` and a
+  proxy if enabled).
+- `Caddyfile` - reverse-proxy configuration; originally used for public
+  hostnames, now mostly for the internal `*.svc.internal` domain.
 
-Quick start
-1. Edit `Caddyfile` and replace `YOUR_DOMAIN` with your DNS name (e.g. `jellyfin.example.com`).
-2. Ensure DNS A record for that name points to your public IP.
-3. Forward router ports `80->host:80` and `443->host:443` where this compose will run.
-4. From this folder run:
+Quick start (tailnet/local use)
+1. Bring up the stack from this directory:
 
 ```bash
 docker compose up -d
 ```
 
-5. Visit `https://YOUR_DOMAIN` and complete Jellyfin setup (create admin account, media libraries).
-6. In Jellyfin admin settings, set the "Public HTTP" URL to `https://YOUR_DOMAIN` so client devices register correctly.
+2. Authenticate the `tailscale` service (see Tailnet access section below).
+3. Points clients either at the internal proxy hostnames or directly to
+   `ds-s-01.lan.internal:8096` while they remain on the LAN.
+4. No router port-forwards are required unless you later decide to expose
+   the service publicly.
+
+The legacy "Expose via Caddy/Let's Encrypt" instructions are further down
+for historical curiosity.
+
+---
+
+### Tailnet access (optional)
+
+If you want Jellyfin accessible only on your Tailscale mesh, a `tailscale` service is included in the compose. After bringing the stack up:
+
+```sh
+# authenticate the host and give it a magic-dns name (e.g. jelly)
+docker exec tailscale tailscale up --authkey=tskey-... --hostname=jelly
+
+# optionally expose the Jellyfin port on the tailnet
+docker exec tailscale tailscale serve jelly.<your-tailnet>.ts.net=8096
+```
+
+Clients on the tailnet can then reach the server as `https://jelly.<your-tailnet>.ts.net` without opening public ports.  This works equally well from a laptop, phone, or a Tailscale‑capable TV – once the device is logged into your tailnet the app will talk directly to the server.  See the main repo README for general tailscale guidance.
+
+---
+
+### Internal network & reverse proxy
+
+This service now joins the shared `internal` network, which is automatically
+created when you deploy the proxy stack.  The proxy itself owns the network,
+so there is no need for a separate `internal` stack or manual network command.
+Remove the `ports:` mappings above, since all traffic will be routed by
+hostname through the proxy.
+
+To deploy the proxy and network:
+
+```sh
+cd stacks/reverse-proxy
+# brings up Caddy and simultaneously creates the `internal` network
+docker compose up -d
+```
+
+Configure the proxy's `Caddyfile` (or equivalent) with entries for each
+service, e.g. `jelly.svc.internal` → `jellyfin:8096`.  Clients on your LAN can
+use DNS or `/etc/hosts` to resolve `*.svc.internal` to the proxy host.  
+
+> **Temporary compatibility:** if you still have devices pointing directly at
+> `ds-s-01.lan.internal:8096`, add a rule in the proxy (shown above) to
+> forward that port to Jellyfin. Once clients are switched over you can remove
+> the rule.
+
+With this pattern you can add other stacks (Sonarr, Radarr, etc.) by simply
+attaching them to the `internal` network and adding proxy rules; no port
+mappings are required in their compose files.
 
 Security recommendations (Roku-compatible)
 - Do NOT use HTTP Basic or reverse-proxy SSO for the Jellyfin hostname; Roku devices need plain HTTPS with regular Jellyfin credentials.

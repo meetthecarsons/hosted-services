@@ -1,0 +1,12 @@
+# This stack used to create the `internal` network.
+#
+# It is now deprecated because the reverse-proxy stack creates the network
+# itself.  You can safely delete this directory and file; it is kept only for
+# historical reference.
+
+version: "3.8"
+
+networks:
+  internal:
+    name: internal
+    driver: bridge
