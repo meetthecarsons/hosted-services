@@ -1,6 +1,16 @@
 version: "3.8"
 
 services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale
+    network_mode: "host"           # allows the daemon to configure the host interface
+    privileged: true
+    volumes:
+      - /var/lib/tailscale:/var/lib/tailscale
+    command: tailscaled
+    restart: unless-stopped
+
   jellyfin:
     image: linuxserver/jellyfin:latest
     container_name: jellyfin
@@ -17,12 +27,7 @@ services:
     group_add:
       - "44" # Add the 'video' group (or the group owning /dev/dri/renderD128)
     networks:
-      - web
-    ports:
-      - 8096:8096 # Web UI
-      - 8920:8920 # HTTPS (optional)
-      - 7359:7359/udp # Auto-discovery
-      - 1900:1900/udp # DLNA (optional)
+      - internal
     restart: unless-stopped
 
   caddy:
@@ -49,5 +54,5 @@ volumes:
   caddy_config:
 
 networks:
-  web:
-    driver: bridge
+  internal:
+    external: true
