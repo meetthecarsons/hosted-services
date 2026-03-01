@@ -66,3 +66,76 @@ A simple `Makefile` is provided at the repo root to reduce typing (see it for av
  - **Cleanup:** remove the plaintext `stacks/<stack>/.env` after the stack is running.
 
 This repository tracks encrypted secret artifacts (`.env.sops`) and treats plaintext `.env` files as local operator-only files. See `.sops.yaml` for the repository encryption policy.
+
+**Developer Dependencies**
+
+- **Required tools:** `pre-commit`, `sops`, `age`/`age-keygen`.
+- **Recommended helpers** (used by hooks in `.pre-commit-config.yaml`): `shfmt`, `shellcheck`, `hadolint`, `yamllint`, and `detect-secrets`.
+
+Install examples:
+
+- Nix (user profile):
+
+   ```bash
+   nix profile install nixpkgs#pre-commit nixpkgs#sops nixpkgs#age nixpkgs#shfmt nixpkgs#shellcheck nixpkgs#yamllint nixpkgs#hadolint
+   python -m pip install --user detect-secrets
+   ```
+
+- Debian / Ubuntu (apt + releases):
+
+   ```bash
+   sudo apt update
+   sudo apt install -y python3-pip shellcheck yamllint
+   pip3 install --user pre-commit detect-secrets
+   # shfmt and hadolint releases (if not in apt or you want latest):
+   curl -sL -o /usr/local/bin/shfmt https://github.com/mvdan/sh/releases/latest/download/shfmt_v3.6.0_linux_amd64
+   chmod +x /usr/local/bin/shfmt
+   curl -sL -o /usr/local/bin/hadolint https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64
+   chmod +x /usr/local/bin/hadolint
+   # sops + age (install from package or releases)
+   pip3 install --user sops
+   ```
+
+- macOS (Homebrew / pipx):
+
+   ```bash
+   brew install pre-commit shfmt shellcheck yamllint hadolint sops age
+   pipx install detect-secrets || pip3 install --user detect-secrets
+   ```
+
+Enable hooks and run once:
+
+```bash
+pre-commit install
+pre-commit run --all-files
+```
+
+If `detect-secrets` flags existing secrets, create a baseline so approved secrets are not repeatedly reported:
+
+```bash
+detect-secrets scan > .secrets.baseline
+git add .secrets.baseline
+```
+
+Keep `age_key.txt` private (it is gitignored); CI should use secret storage to provide keys if automated decrypt is required.
+
+**Pre-Commit Dependencies**
+
+ - **pre-commit**: install via `pipx install pre-commit` (or `pip install --user pre-commit`). Install hooks in the repo with `pre-commit install`.
+ - **Optional / recommended tools:**
+    - **shfmt**: shell formatter. Debian: `sudo curl -sSL -o /usr/local/bin/shfmt https://github.com/mvdan/sh/releases/download/v3.6.0/shfmt_v3.6.0_linux_amd64 && sudo chmod +x /usr/local/bin/shfmt`; macOS: `brew install shfmt`.
+    - **shellcheck**: shell linter. Debian: `sudo apt install shellcheck`; macOS: `brew install shellcheck`.
+    - **yamllint**: YAML linter. Debian: `sudo apt install yamllint`; macOS: `brew install yamllint`.
+    - **hadolint**: Dockerfile linter. Install from releases or `brew install hadolint` on macOS.
+    - **detect-secrets**: secret detector. Install with `pipx install detect-secrets` or `pip install --user detect-secrets`.
+
+Run the hooks locally once with:
+```
+pre-commit run --all-files
+```
+
+If `detect-secrets` flags existing approved keys, create a baseline:
+```
+detect-secrets scan > .secrets.baseline
+git add .secrets.baseline
+```

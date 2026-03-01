@@ -8,4 +8,3 @@
     # plaintext HTTP on the LAN
     tls internal
 }
-

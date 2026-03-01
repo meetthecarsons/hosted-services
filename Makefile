@@ -23,7 +23,7 @@ sops-up:
 	@echo "Decrypting stacks/$(SERVICE)/.env.sops -> using secure temp file and running compose"
 	@TMP=$$(mktemp -p /tmp sops-up.XXXXXX) && \
 		if [ -f age_key.txt ]; then export SOPS_AGE_KEY_FILE=$(PWD)/age_key.txt; fi && \
-		SOPS_AGE_KEY_FILE=$${SOPS_AGE_KEY_FILE:-} sops -d stacks/$(SERVICE)/.env.sops > $$TMP && \
+		SOPS_AGE_KEY_FILE=$${SOPS_AGE_KEY_FILE:-} sops -d --input-type dotenv --output-type dotenv stacks/$(SERVICE)/.env.sops > $$TMP && \
 		chmod 600 $$TMP && \
 		docker compose --env-file $$TMP -f stacks/$(SERVICE)/docker-compose.yaml up -d && \
 		if command -v shred >/dev/null 2>&1; then shred -u $$TMP; else rm -f $$TMP; fi
@@ -45,7 +45,7 @@ sops-decrypt:
 	@TMP=$$(mktemp -p /tmp sops-decrypt.XXXXXX) && \
 		echo "using tmp: $$TMP" && \
 		if [ -f age_key.txt ]; then export SOPS_AGE_KEY_FILE=$(PWD)/age_key.txt; fi && \
-		SOPS_AGE_KEY_FILE=$${SOPS_AGE_KEY_FILE:-} sops -d $(FILE) > $$TMP && \
+		SOPS_AGE_KEY_FILE=$${SOPS_AGE_KEY_FILE:-} sops -d --input-type dotenv --output-type dotenv $(FILE) > $$TMP && \
 		chmod 600 $$TMP && \
 		cat $$TMP > $(FILE:.sops=) && \
 		if command -v shred >/dev/null 2>&1; then shred -u $$TMP; else rm -f $$TMP; fi

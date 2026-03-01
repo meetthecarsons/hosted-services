@@ -94,7 +94,7 @@ docker compose up -d
 
 Configure the proxy's `Caddyfile` (or equivalent) with entries for each
 service, e.g. `jelly.svc.internal` → `jellyfin:8096`.  Clients on your LAN can
-use DNS or `/etc/hosts` to resolve `*.svc.internal` to the proxy host.  
+use DNS or `/etc/hosts` to resolve `*.svc.internal` to the proxy host.
 
 > **Temporary compatibility:** legacy LAN clients can still hit the
 > server directly on port 8096 because the Jellyfin service exposes that port

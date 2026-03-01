@@ -10,7 +10,7 @@ IMMICH_VERSION=release
 DB_PASSWORD=postgres
 DB_USERNAME=postgres
 DB_DATABASE_NAME=immich
-``` 
+```
 
 Change values as needed; the example `.env` in this repo is a good starting point.
 
