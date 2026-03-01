@@ -1,0 +1,10 @@
+creation_rules:
+  - path_regex: 'stacks/.*/.env(.sops)?$'
+    input_type: dotenv
+    age: ['age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n']
+    # encrypt only sensitive variable values (keep keys readable)
+    encrypted_regex: '^(WIREGUARD_PRIVATE_KEY)$'
+
+# This rule targets tracked `stacks/*/.env.sops` files, treats them as dotenv,
+# encrypts only the `WIREGUARD_PRIVATE_KEY` values, and leaves other keys/values
+# readable for easier reviews. Add more keys to `encrypted_regex` as needed.

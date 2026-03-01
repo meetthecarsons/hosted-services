@@ -1,3 +1,14 @@
+# Ignore local plaintext secret files and local key material
+**/.env
+age_key.txt
+
+# Keep examples tracked
+**/.env.example
+
+# Node / Python defaults (harmless)
+venv/
+__pycache__/
+.pytest_cache/
 # ignore environment files and local data for each stack
 # stacks/*/.env  <-- tracked by repo for stacks where we choose to commit .env
 stacks/*/.env.local

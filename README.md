@@ -57,3 +57,12 @@ A simple `Makefile` is provided at the repo root to reduce typing (see it for av
 - **Keep it simple.** Every service is self-contained; no orchestration layer, GUI, or Portainer metadata.
 - **Manage per‑host.** Each physical machine clones the repo and runs only the services it needs.
 - **Document, don’t encode.** The repository doesn’t know where services belong; `HOSTS.md` helps you remember.
+
+## SOPS operator workflow
+
+ - **Prepare secrets:** create an untracked plaintext file `stacks/<stack>/ .env` with secret values (use `stacks/<stack>/.env.example` as a template).
+ - **Encrypt for repo:** run `sops -e stacks/<stack>/.env > stacks/<stack>/.env.sops` and commit the resulting `.env.sops` file.
+ - **Run the stack:** locally decrypt when needed with `sops -d stacks/<stack>/.env.sops > stacks/<stack>/.env` then `docker compose -f stacks/<stack>/docker-compose.yaml up -d`.
+ - **Cleanup:** remove the plaintext `stacks/<stack>/.env` after the stack is running.
+
+This repository tracks encrypted secret artifacts (`.env.sops`) and treats plaintext `.env` files as local operator-only files. See `.sops.yaml` for the repository encryption policy.
