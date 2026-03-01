@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    volumes:
+      - /mnt/fast-pool-01/appdata/infisical/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: infisical
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  redis:
+    image: redis:7
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    volumes:
+      - /mnt/fast-pool-01/appdata/infisical/minio:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+
+  api:
+    image: ghcr.io/infisical/infisical:latest
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - redis
+      - minio
+    environment:
+      # Construct DB URL from the in-stack Postgres credentials (database name hard-coded)
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/infisical
+      # In-stack Redis (no external env required)
+      REDIS_URL: redis://redis:6379
+      # Use shared MinIO from the `data-storage` stack
+      S3_ENDPOINT: http://minio:9000
+      S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
+      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+      JWT_SECRET: ${INFISICAL_JWT_SECRET}
+      MASTER_KEY: ${INFISICAL_MASTER_KEY}
+      NODE_ENV: production
+    ports:
+      - "8080:8080"
+
+  ui:
+    image: ghcr.io/infisical/infisical-ui:latest
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      # Default to host-local API port so the browser can reach it
+      REACT_APP_API_URL: http://localhost:8080
+    ports:
+      - "3000:3000"
