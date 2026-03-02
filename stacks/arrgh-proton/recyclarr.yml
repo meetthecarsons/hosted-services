@@ -5,7 +5,7 @@ sonarr:
     # MAIN SONARR INSTANCE - 2160p and 1080p profiles
     tv:
         base_url: http://127.0.0.1:8989/sonarr
-        api_key: ENC[AES256_GCM,data:bTVoWArEo9kayJgWmQsiBop9l1QyzAPWAtaJZO1CNPE=,iv:s1hVBgB+wuKFYr4V0DlmzJE1kXgsh4SyR/KdXLvH8nY=,tag:DvH6iZeS/vkixWcZTuAdKQ==,type:str]
+        api_key: ENC[AES256_GCM,data:kIbjhc1axJygr2Z0R1+a1rxGsiBJVc1M+d6KuYMUDlk=,iv:c9Onf19Pn4L4HE6ikyqbZPB8Epkvs2h93LWgBiEcGfw=,tag:yp/+wEYs4VfHItJny1p14A==,type:str]
         # manual Sonarr quality profiles
         quality_profiles:
             - name: WEB-2160p
@@ -45,13 +45,27 @@ sonarr:
             - trash_ids:
                 # Bad Dual Groups
                 - 32b367365729d530ca1c124a0b180c64
+              assign_scores_to:
+                - name: WEB-2160p
+                  score: -10000
+                - name: WEB-1080p
+                  score: -10000
+            - trash_ids:
                 # No-RlsGroup
                 - 82d40da2bc6923f41e14394075dd4b03
+              assign_scores_to:
+                - name: WEB-2160p
+                  score: -10000
+                - name: WEB-1080p
+                  score: -10000
+            - trash_ids:
                 # Retags
                 - 06d66ab109d4d2eddb2794d21526d140
               assign_scores_to:
                 - name: WEB-2160p
+                  score: -10000
                 - name: WEB-1080p
+                  score: -10000
             - trash_ids:
                 # HD Bluray Tier 01
                 - d6819cba26b1a6508138d25fb5e32293
@@ -71,12 +85,15 @@ sonarr:
                   # Override default negative to 0 for 2160p
                   score: 0
                 - name: WEB-1080p
+                  score: 0
             - trash_ids:
                 # x265 (no HDR/DV)
                 - 9b64dff695c2115facf1b6ea59c9bd07
               assign_scores_to:
                 - name: WEB-2160p
+                  score: -10000
                 - name: WEB-1080p
+                  score: -10000
             - trash_ids:
                 # SDR (no WEBDL)
                 - 83304f261cf516bb208c18c54c0adf97
@@ -86,25 +103,33 @@ sonarr:
             - trash_ids:
                 # WEB Tier 01
                 - e6258996055b9fbab7e9cb2f75819294
+              assign_scores_to:
+                - name: WEB-2160p
+                  score: 1700
+                - name: WEB-1080p
+                  score: 1700
+            - trash_ids:
                 # WEB Tier 02
                 - 58790d4e2fdcd9733aa7ae68ba2bb503
+              assign_scores_to:
+                - name: WEB-2160p
+                  score: 1650
+                - name: WEB-1080p
+                  score: 1650
+            - trash_ids:
                 # WEB Tier 03
                 - d84935abd3f8556dcd51d4f27e22d0a6
               assign_scores_to:
                 - name: WEB-2160p
-                  # Tier 1 gets highest score; adjust as needed
-                  score: 1000
+                  score: 1600
                 - name: WEB-1080p
-                  score: 1000
-                  # NOTE: if you want a lower score for the other tiers, either duplicate
-                  # the block with different `score:` values or split into multiple
-                  # rules.  The three tiers above are all in one rule for brevity.
+                  score: 1600
     # ==========================================================================
     # ANIME SONARR INSTANCE
     # ==========================================================================
     anime:
         base_url: http://127.0.0.1:8990/sonarr-anime
-        api_key: ENC[AES256_GCM,data:gzkeVqfh6BXtg2GnERkrGbQvsWmjMBU26dvE7whjsYE=,iv:L8cTzIqmNfXMvmxY8Iv6/wvhen3oqlyHAly9N7LGUVc=,tag:2WX9DwAG49cD7bSDyWLbbw==,type:str]
+        api_key: ENC[AES256_GCM,data:nesvz//iWTJbeVW/D11UObsStvYlS0jUQO1fkmPPOMM=,iv:bZPl4BhuuOJaogoUfCqfspwekDiGg8DFlnHXfq7cd/o=,tag:JRyWks5kMUDj/TNsHiG9Qg==,type:str]
         quality_definition:
             type: anime
         # manual anime profile
@@ -165,23 +190,79 @@ sonarr:
                 - name: Remux-1080p - Anime
                   # highest score for BD source groups
                   score: 1000
+            - trash_ids: null
+              # Anime Web Tier 01
             - trash_ids:
-                # Anime Web Tier 01
                 - e0014372773c8f0e1bef8824f00c7dc4
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 600
+            - trash_ids:
                 # Anime Web Tier 02
                 - 19180499de5ef2b84b6ec59aae444696
-                # Anime Web Tier 03
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 500
+            - trash_ids:
+                # Anime Web Tier 03
                 - c27f2ae6a4e82373b0f1da094e2489ad
-                # Anime Web Tier 04
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 400
+            - trash_ids:
+                # Anime Web Tier 04
                 - 4fd5528a3a8024e6b49f9c67053ea5f3
-                # Anime Web Tier 05
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 400
+            - trash_ids:
+                # Anime Web Tier 05
                 - 29c2a13d091144f63307e4a8ce963a39
-                # Anime Web Tier 06
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 400
+            - trash_ids:
+                # Anime Web Tier 06
                 - dc262f88d74c651b12e9d90b39f6c753
               assign_scores_to:
                 - name: Remux-1080p - Anime
-                  # mid‑tier score for web groups
-                  score: 500
+                  score: 400
+            # ==================== ANIME REMUX TIERS & MISSING CFs ====================
+            - trash_ids:
+                # Remux Tier 01 (TRaSH)
+                - 9965a052eb87b0d10313b1cea89eb451
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+            - trash_ids:
+                # Remux Tier 02 (TRaSH)
+                - 8a1d0c3d7497e741736761a1da866a2e
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+            - trash_ids:
+                # Anime Raws (negative by default)
+                - b4a1b3d705159cdca36d71e57ca86871
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+            - trash_ids:
+                # Anime LQ Groups (negative by default)
+                - e3515e519f3b1360cbfc17651944354c
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+            - trash_ids:
+                # AV1 (negative by default)
+                - 15a05bc7c1a36e2b57fd628f8977e2fc
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+            - trash_ids:
+                # Dubs Only (negative by default)
+                - 9c14d194486c4014d422adc64092d794
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+            - trash_ids:
+                # VOSTFR (negative by default)
+                - 07a32f77690263bb9fda1842db7e273f
+              assign_scores_to:
+                - name: Remux-1080p - Anime
             # ==================== ANIME OPTIONAL ====================
             - trash_ids:
                 # 10bit
@@ -192,42 +273,97 @@ sonarr:
                 - 026d5aadd1a6b4e550b134cb6c72b3ca
               assign_scores_to:
                 - name: Remux-1080p - Anime
-                  # Your custom score
-                  score: 100
+                  # Dual-Audio preference per guide
+                  score: 10
             # ==================== ANIME STREAMING SERVICES ====================
             - trash_ids:
-                # CR (Crunchyroll)
+                # Crunchyroll (CR)
                 - 3e0b26604165f463f3e8e192261e7284
-                # FUNi (Funimation)
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 6
+            - trash_ids:
+                # Disney+ (DSNP)
+                - 89358767a60cc28783cdc3d0be9388a4
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 5
+            - trash_ids:
+                # Netflix (NF)
+                - d34870697c9db575f17700212167be23
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 4
+            - trash_ids:
+                # Amazon (AMZN)
+                - d660701077794679fd59e8bdf4ce3a29
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 3
+            - trash_ids:
+                # VRV
+                - 44a8ee6403071dd7b8a3a8dd3fe8cb20
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 3
+            - trash_ids:
+                # Funimation (FUNi)
                 - 1284d18e693de8efe0fe7d6b3e0b9170
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 2
+            - trash_ids:
+                # ABEMA
+                - a370d974bc7b80374de1d9ba7519760b
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 1
+            - trash_ids:
+                # ADN
+                - d54cd2bf1326287275b56bccedb72ee2
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 1
+            - trash_ids:
+                # B-Global
+                - 7dd31f3dee6d2ef8eeaa156e23c3857e
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 0
+            - trash_ids:
+                # Bilibili
+                - 4c67ff059210182b59cdd41697b8cb08
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 0
+            - trash_ids:
                 # HIDIVE
                 - 570b03b3145a25011bf073274a407259
               assign_scores_to:
                 - name: Remux-1080p - Anime
-                  # Your custom score
-                  score: 75
+                  score: 0
             # ==================== REGULAR FORMATS (ADJUSTED) ====================
             - trash_ids:
                 # x265 (HD)
                 - 47435ece6b99a0b477caf360e79ba0bb
               assign_scores_to:
                 - name: Remux-1080p - Anime
-                  # Your custom score
-                  score: 200
+                  # Align with TRaSH defaults (avoid inheriting unexpected positives)
+                  score: -10000
             - trash_ids:
                 # Bad Dual Groups
                 - 32b367365729d530ca1c124a0b180c64
               assign_scores_to:
                 - name: Remux-1080p - Anime
                   # Your custom score
-                  score: -1000
+                  score: -10000
             - trash_ids:
                 # No-RlsGroup
                 - 82d40da2bc6923f41e14394075dd4b03
               assign_scores_to:
                 - name: Remux-1080p - Anime
                   # Your custom score
-                  score: -500
+                  score: -10000
             - trash_ids:
                 # DV (w/o HDR fallback)
                 - 9b27ab6498ec0f31a3353992e19434ca
@@ -244,7 +380,7 @@ radarr:
     # MAIN RADARR INSTANCE - UHD and HD profiles
     movies:
         base_url: http://localhost:7878/radarr
-        api_key: ENC[AES256_GCM,data:M8GR/D973hthJbAiLjnQA3/TOMEBnmDM9L8PEeGQ9oc=,iv:E8NYu9XMMP7fEkpNQBwNO1FghfJpmU06Y9493icu1Z0=,tag:mDyHID3to2VD/vZp7ZDAnw==,type:str]
+        api_key: ENC[AES256_GCM,data:6P9ouHHrDtEQg8PuTzq/Q1pZj2peBx/yRnpggK/gInk=,iv:PmtF3n4b4475EfQBZGKXpQgMk2N1DGaV+h6Wdzd0wXw=,tag:VQA/sDF2F0obYCMOEnANKA==,type:str]
         # manual quality definition/profile for movies
         quality_definition:
             type: movie
@@ -400,7 +536,7 @@ radarr:
     # ==========================================================================
     anime-movies:
         base_url: http://localhost:7879/radarr-anime
-        api_key: ENC[AES256_GCM,data:LdzMwQ4XOeokCUxHmLZVdxvbHBSuVWUEPbbB9TOF7fo=,iv:HUvdyx9gssAjL7NERCMjXrrwrfHo8zwHXG4C4kQ7zig=,tag:oXeGNvyv8TlxrBDUjlu0AA==,type:str]
+        api_key: ENC[AES256_GCM,data:sFAs9XOQ8o4Bw1rVHNSTjLd+3c8zX7KzXk/ThyJMXXM=,iv:oa7ZMMeqcIfaVKWJCAUVIDIO27IAJ/tzHnYzpYNExt8=,tag:4swo2A/+e/IzamIt2+9QQg==,type:str]
         quality_definition:
             type: anime
         # manual anime profile for radarr
@@ -547,22 +683,22 @@ sops:
         - recipient: age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6Y3JBNXljZGtKM1lFY0RH
-            VGtXcUZpamNBS3FySjRpaVoyYU1FaTR2REM4ClVqWW5adkdsZzJvVDZGWTJMYlor
-            ODkrVCtJWktPeUVjdlc0U0xQeW1Zc2MKLS0tIE82ckVTT25OS25WcmtzMDNRZDRu
-            NFUzVFJzRjd5cWlkZUhMVk5sekdIdHcK5p3jKbjynl4UOmre+libUUcp/Z5QnJlw
-            AC14HN5KUDaME44FHWHNJdeTHckb6Xht9Tzqnkoj0QWONIYEmWoYvQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB3RVl1NXRWTWxwOEFyN3pO
+            b21MYWc4WG5BRThBb1RIa1p4WENWSUlHRkFVCnZqZnVCY01QclYrNndmTG01YjAz
+            SG85UDhKUU4xYTg3cmNOdU5zQXJlRGsKLS0tIC9NVkFWVDU5ekhEd0tQdGZ0aVcz
+            YUlhbzdMUWJkTTc2Wkl5bnczWk5XdVEKI0NVdylVGyxq4GE6aIjGqtp7kNPFTGpp
+            oOSX6fiUS0YxL24+N1X2BKkMwDERw5AE65hdUNT4V508pObM/gup/g==
             -----END AGE ENCRYPTED FILE-----
         - recipient: age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7
           enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBtQ080QVY0bVFReERuRmxv
-            UmJsYTZpRmc1NzJoQW9nWURzUTV3cHBIbGkwCmprSVU1RW9idDlOVi9sOXdtTjVp
-            TlpVbkYvVkRiOVBuNzdzYkhpZWNtY28KLS0tIElFRjI5RmszRHM4WnJGN01heGMv
-            d2k4UDlOTHZmVmdlQ01YN3kzZUExZHMKRTdIkeDcDPMPYP98QQ7SZbbxB0UQErhB
-            FmMiJn23x2i3yJBVk3wog29EIqE9B41imS9AJPk+KKQ19zV99rvd4w==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAvTitaYXYyeW44aDZIVDdw
+            dy9oT1JwUTNVMHdGanQ1ekhzRDlxWDU4TnprCmNDMFN6cEJua09FN2Q5andaVEcx
+            KzBxMXJPblYrWmw4VWtnZ3ZoS09LR0UKLS0tIFlyY01XYUpRbkVydW5DTnNiUDQx
+            UEtxc1BDZEdCK29VcHk2VDgveHZDR2sKJ7FpZlQqjjbfveeKkV/8skiqN8gESs8Q
+            6R7D2tTdxW+81ThIArmWA9lqVgrmmMnWIxe91zMFxtqiuL6dPZx9XQ==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-02T04:35:49Z"
-    mac: ENC[AES256_GCM,data:ehkh6r2V0+zr6e7RC+uYdwGwPZ9jlxgpfoL7U4HASvRBbifFEkfbkKS6WC/iVW9Lv6gLOROWtypFIQAN7KcmKa4m84jINESvUIy1o0FeUsDLMbtDlo6hxYIsqwUWiOD3dv4pO9riJfyZPv/JfiyGWlEFgedhCjhSCr3guVR4vHM=,iv:Dr/RmPD+OLMGM1p0cynjujShN/NDGAOG9Z/nFSo4zjg=,tag:VVdnaJz54DV6l7vZ8b2qWA==,type:str]
+    lastmodified: "2026-03-02T06:59:09Z"
+    mac: ENC[AES256_GCM,data:KA2yPbeBKvccCpljPJKJQRAaeh1d6vr8wzUTShMeqxIuYr9yS9MCPA/33WY6UfIiFJVd/otWTOeOBnk5KPWqjXbekDLzwM4gc6h2+eZQ0KzbeXcscej6y9hRZKYhySK9bkFDO6Ejtt9r2LS1YN2ngGYP1wE8W3Dg8Q/eNkxEhz4=,iv:xsdxloIUZhgo4Ab/eq2Pvv0RLT60afrpgxvyLxQxNEA=,tag:GtYsYhht6tJGmy/8UEhjAg==,type:str]
     encrypted_regex: ^(password|secret|api_key|token|private_key)$
     version: 3.12.1
