@@ -117,6 +117,18 @@ detect-secrets scan > .secrets.baseline
 git add .secrets.baseline
 ```
 
+Makefile SOPS key requirement: The repository `Makefile` SOPS targets now require the environment variable `SOPS_AGE_KEY_FILE` to be exported and point to your local age private key file. There is no automatic fallback to `age_key.txt`.
+
+
+Recipients: The encryption recipients are configured in the repo `.sops.yaml` policy file. `make sops-reencrypt` and `make sops-reencrypt-all` always use the repository policy; passing recipients on the command line is no longer supported.
+
+Example:
+
+```bash
+export SOPS_AGE_KEY_FILE=/home/you/.config/sops/age_key.txt
+make SERVICE=nextcloud sops-up
+```
+
 Keep `age_key.txt` private (it is gitignored); CI should use secret storage to provide keys if automated decrypt is required.
 
 **Pre-Commit Dependencies**
