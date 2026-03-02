@@ -6,11 +6,13 @@ repos:
       - id: end-of-file-fixer
       - id: check-added-large-files
       - id: check-yaml
+        exclude: 'recyclarr\.yml$'
 
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.30.0
     hooks:
       - id: yamllint
+        exclude: 'recyclarr\.yml$'
 
   - repo: https://github.com/koalaman/shellcheck-precommit
     rev: v0.11.0
