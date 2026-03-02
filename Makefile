@@ -45,13 +45,8 @@ logs:
 # Usage: make SERVICE=arrgh-proton sops-up
 sops-up:
 	@echo "Decrypting stacks/$(SERVICE)/.env.sops -> using secure temp file and running compose"
-	@# Require SOPS_AGE_KEY_FILE to be set by caller/CI
-	@if [ -z "$${SOPS_AGE_KEY_FILE:-}" ]; then echo "SOPS_AGE_KEY_FILE not set. Export the path to your age key file and retry."; exit 1; fi
-	@TMP=$$(mktemp -p /tmp sops-up.XXXXXX) && \
-		SOPS_AGE_KEY_FILE=$${SOPS_AGE_KEY_FILE} sops -d --input-type dotenv --output-type dotenv stacks/$(SERVICE)/.env.sops > $$TMP && \
-		chmod 600 $$TMP && \
-		docker compose --env-file $$TMP -f stacks/$(SERVICE)/docker-compose.yaml up -d && \
-		if command -v shred >/dev/null 2>&1; then shred -u $$TMP; else rm -f $$TMP; fi
+	@make sops-decrypt FILE=stacks/$(SERVICE)/.env.sops && \
+		docker compose -f stacks/$(SERVICE)/docker-compose.yaml up -d
 
 
 sops-reencrypt:
