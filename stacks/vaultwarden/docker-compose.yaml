@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
-      - TS_EXTRA_ARGS=--advertise-tags=tag:containers
+      - TS_EXTRA_ARGS=--advertise-tags=tag:containerss
       - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
     volumes:
       - tailscale-vaultwarden:/var/lib/tailscale  # Persistent state
