@@ -3,6 +3,7 @@ services:
     image: ghcr.io/mealie-recipes/mealie:v3.3.2
     container_name: mealie
     restart: always
+    user: "2000:2000" # Run as apps user to match NFS mount ownership
     ports:
       - "127.0.0.1:9925:9000" # localhost only, Tailscale will proxy
     deploy:
@@ -14,8 +15,6 @@ services:
     environment:
       # Set Backend ENV Variables Here
       ALLOW_SIGNUP: "false"
-      PUID: ${PUID:-2000}
-      PGID: ${PGID:-2000}
       TZ: ${TZ:-America/Anchorage}
       BASE_URL: ${BASE_URL:-https://food.eland-wyrm.ts.net}
     networks:

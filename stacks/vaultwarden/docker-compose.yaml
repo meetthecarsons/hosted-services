@@ -3,6 +3,7 @@ services:
     image: vaultwarden/server:latest
     container_name: vaultwarden
     restart: unless-stopped
+    user: "2000:2000" # Run as apps user to match NFS mount ownership
     environment:
       - DOMAIN=${DOMAIN:-https://vault.${TAILSCALE_DOMAIN:-eland-wyrm.ts.net}}
       - SIGNUPS_ALLOWED=${SIGNUPS_ALLOWED:-false}
@@ -11,12 +12,10 @@ services:
       - DATABASE_URL=${DATABASE_URL:-sqlite:///data/db.sqlite3}
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_FILE=${LOG_FILE:-/data/vaultwarden.log}
-      - PUID=${PUID:-2000}
-      - PGID=${PGID:-2000}
     ports:
       - "127.0.0.1:8000:80"  # Only accessible via localhost, Tailscale will proxy
     volumes:
-      - /mnt/ds-s-01/shared/vaultwarden/data:/data
+      - vaultwarden-data:/data
     networks:
       - vaultwarden
 
@@ -43,5 +42,11 @@ networks:
     driver: bridge
 
 volumes:
+  vaultwarden-data:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=192.168.50.81,vers=4,soft,timeo=180,bg,rsize=65536,wsize=65536
+      device: ":/mnt/fast-pool-01/shared/delamain/vaultwarden/data"
   tailscale-vaultwarden:
     driver: local
