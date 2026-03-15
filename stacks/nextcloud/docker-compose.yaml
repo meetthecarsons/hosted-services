@@ -15,6 +15,7 @@ services:
     volumes:
       - /mnt/ds-s-01/shared/nextcloud/config:/mnt/docker-aio-config # Persistent configuration for the master container
       - /mnt/ds-s-01/shared/nextcloud/data:/mnt/ncdata # Bind mount for Nextcloud data
+      - /var/run/docker.sock:/var/run/docker.sock # Docker socket for container management
       # - /path/to/your/nextcloud/backup:/mnt/backup # Optional: for AIO backups
     networks:
       - nextcloud
