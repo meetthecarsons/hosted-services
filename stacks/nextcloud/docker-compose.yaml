@@ -13,7 +13,7 @@ services:
       - PGID=${PGID:-2000}
       # - NEXTCLOUD_HOST=your-domain.com # Uncomment and set your domain if not using a reverse proxy
     volumes:
-      - /mnt/ds-s-01/shared/nextcloud/config:/mnt/docker-aio-config # Persistent configuration for the master container
+      - /mnt/ds-s-01/shared/nextcloud/config:/mnt/docker-aio-config # Config mounted to NFS
       - /mnt/ds-s-01/shared/nextcloud/data:/mnt/ncdata # Bind mount for Nextcloud data
       - /var/run/docker.sock:/var/run/docker.sock # Docker socket for container management
       # - /path/to/your/nextcloud/backup:/mnt/backup # Optional: for AIO backups
