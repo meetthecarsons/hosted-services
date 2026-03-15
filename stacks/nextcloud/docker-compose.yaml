@@ -5,10 +5,6 @@ services:
     restart: always
     user: "2000:2000" # Run as apps user to match NFS mount ownership
     network_mode: service:tailscale  # Share network with Tailscale container
-    ports:
-      - 127.0.0.1:80:80 # For initial setup and HTTP access (localhost only, Tailscale will proxy)
-      - 127.0.0.1:443:443 # For HTTPS access (localhost only, managed by AIO's Caddy or external reverse proxy)
-      - 127.0.0.1:8080:8080 # For the AIO management interface (localhost only)
     environment:
       - NEXTCLOUD_DATADIR=/mnt/ncdata # Adjust if you want to store data elsewhere
       # - NEXTCLOUD_HOST=your-domain.com # Uncomment and set your domain if not using a reverse proxy
@@ -24,6 +20,10 @@ services:
     container_name: tailscale
     hostname: nextcloud  # Hostname for this node on the tailnet
     restart: unless-stopped
+    ports:
+      - 127.0.0.1:80:80 # For initial setup and HTTP access (localhost only, Tailscale will proxy)
+      - 127.0.0.1:443:443 # For HTTPS access (localhost only, managed by AIO's Caddy or external reverse proxy)
+      - 127.0.0.1:8080:8080 # For the AIO management interface (localhost only)
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}
       - TS_EXTRA_ARGS=--advertise-tags=tag:containers
