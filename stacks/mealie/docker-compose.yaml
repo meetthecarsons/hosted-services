@@ -19,7 +19,7 @@ services:
 
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: tailscale
+    container_name: mealie-ts
     restart: unless-stopped
     hostname: food  # Hostname for this node on the tailnet
     environment:
