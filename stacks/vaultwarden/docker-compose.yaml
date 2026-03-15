@@ -1,0 +1,47 @@
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    environment:
+      - DOMAIN=${DOMAIN:-https://vault.${TAILSCALE_DOMAIN:-eland-wyrm.ts.net}}
+      - SIGNUPS_ALLOWED=${SIGNUPS_ALLOWED:-false}
+      - INVITATIONS_ALLOWED=${INVITATIONS_ALLOWED:-true}
+      - SHOW_PASSWORD_HINT=${SHOW_PASSWORD_HINT:-false}
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///data/db.sqlite3}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_FILE=${LOG_FILE:-/data/vaultwarden.log}
+      - PUID=${PUID:-2000}
+      - PGID=${PGID:-2000}
+    ports:
+      - "127.0.0.1:8000:80"  # Only accessible via localhost, Tailscale will proxy
+    volumes:
+      - ${VAULTWARDEN_DATA:-/mnt/ds-s-01/shared/vaultwarden/data}:/data
+    networks:
+      - vaultwarden
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: vaultwarden-tailscale
+    restart: unless-stopped
+    environment:
+      - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
+      - TS_EXTRA_ARGS=--advertise-tags=tag:vaultwarden # Advertise tags for this container
+      - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
+    volumes:
+      - tailscale-vaultwarden:/var/lib/tailscale  # Persistent state
+      - /dev/net/tun:/dev/net/tun  # Required for Tailscale
+    cap_add:
+      - NET_ADMIN  # Required for Tailscale to manage network interfaces
+    networks:
+      - vaultwarden
+    depends_on:
+      - vaultwarden
+
+networks:
+  vaultwarden:
+    driver: bridge
+
+volumes:
+  tailscale-vaultwarden:
+    driver: local

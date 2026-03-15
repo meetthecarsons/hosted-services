@@ -10,6 +10,9 @@ ds-s-01.lan.internal
 
 delamain.lan.internal
   - minecraft-bedrock
+  - nextcloud         # All-in-one cloud storage
+  - mealie            # Recipe manager
+  - vaultwarden       # Password manager
 ```
 
 Update this file whenever you add, remove, or relocate a stack.

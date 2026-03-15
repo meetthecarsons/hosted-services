@@ -34,6 +34,11 @@ pull:
 logs:
 	docker compose -f stacks/$(SERVICE)/docker-compose.yaml logs -f
 
+create-contexts:
+    docker context create ds-s-01 --docker "host=ssh://ds-s-01.lan.internal" || true
+    docker context ls --format '{{.Name}}\t{{.DockerEndpoint}}' | grep "^media-server\t" || exit 1
+    docker context create apps01 --docker "host=ssh://ds-s-01.lan.internal" || true
+    docker context ls --format '{{.Name}}\t{{.DockerEndpoint}}' | grep "^media-server\t" || exit 1
 
 # Encrypt or decrypt a passed-in file.
 # Usage:

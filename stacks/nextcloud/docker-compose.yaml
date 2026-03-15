@@ -4,15 +4,44 @@ services:
     image: nextcloud/all-in-one:latest
     restart: always
     ports:
-      - 80:80 # For initial setup and HTTP access
-      - 443:443 # For HTTPS access (managed by AIO's Caddy or an external reverse proxy)
-      - 8080:8080 # For the AIO management interface
+      - 127.0.0.1:80:80 # For initial setup and HTTP access (localhost only, Tailscale will proxy)
+      - 127.0.0.1:443:443 # For HTTPS access (localhost only, managed by AIO's Caddy or external reverse proxy)
+      - 127.0.0.1:8080:8080 # For the AIO management interface (localhost only)
     environment:
       - NEXTCLOUD_DATADIR=/mnt/ncdata # Adjust if you want to store data elsewhere
+      - PUID=${PUID:-2000}
+      - PGID=${PGID:-2000}
       # - NEXTCLOUD_HOST=your-domain.com # Uncomment and set your domain if not using a reverse proxy
-      # - APACHE_PORT=11000 # Example for custom internal port if needed
     volumes:
-      - /opt/app/containers/nextcloud/config:/mnt/docker-aio-config # Persistent configuration for the master container
-      - /opt/app/containers/nextcloud/data:/mnt/ncdata # Bind mount for Nextcloud data
+      - /mnt/ds-s-01/shared/nextcloud/config:/mnt/docker-aio-config # Persistent configuration for the master container
+      - /mnt/ds-s-01/shared/nextcloud/data:/mnt/ncdata # Bind mount for Nextcloud data
       # - /path/to/your/nextcloud/backup:/mnt/backup # Optional: for AIO backups
+    networks:
+      - nextcloud
     container_name: nextcloud-aio-mastercontainer
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: nextcloud-tailscale
+    restart: unless-stopped
+    environment:
+      - TS_AUTH_KEY=${TS_AUTH_KEY}
+      - TS_EXTRA_ARGS=--advertise-tags=tag:nextcloud
+      - TS_STATE_DIR=/var/lib/tailscale
+    volumes:
+      - tailscale-nextcloud:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - nextcloud
+    depends_on:
+      - nextcloud-aio-mastercontainer
+
+networks:
+  nextcloud:
+    driver: bridge
+
+volumes:
+  tailscale-nextcloud:
+    driver: local
