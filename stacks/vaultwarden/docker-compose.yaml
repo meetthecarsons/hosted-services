@@ -15,7 +15,7 @@ services:
     ports:
       - "127.0.0.1:8000:80"  # Only accessible via localhost, Tailscale will proxy
     volumes:
-      - vaultwarden-data:/data
+      - /mnt/ds-s-01/shared/vaultwarden/data:/data  # Bind mount to NFS for persistence
     networks:
       - vaultwarden
 
@@ -42,11 +42,5 @@ networks:
     driver: bridge
 
 volumes:
-  vaultwarden-data:
-    driver: local
-    driver_opts:
-      type: nfs
-      o: addr=192.168.50.81,vers=4,soft,timeo=180,bg,rsize=65536,wsize=65536
-      device: ":/mnt/fast-pool-01/shared/delamain/vaultwarden/data"
   tailscale-vaultwarden:
     driver: local
