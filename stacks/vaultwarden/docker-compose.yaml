@@ -13,6 +13,13 @@ services:
       - LOG_LEVEL=info
       - LOG_FILE=/data/vaultwarden.log
       - ADMIN_TOKEN=${ADMIN_TOKEN}  # Set this in your .env file for admin access
+      - SMTP_HOST=smtp.mailgun.org
+      - SMTP_PORT=587
+      - SMTP_USERNAME=vault@relay.b0rked.xyz
+      - SMTP_PASSWORD=${SMTP_PASSWORD}  # Set this in your .env file for email functionality
+      - SMTP_FROM=vault@relay.b0rked.xyz
+      - SMTP_FROM_NAME=Vaultwarden
+      - SMTP_SECURITY=starttls
     volumes:
       - /mnt/ds-s-01/shared/vaultwarden/data:/data  # Bind mount to NFS for persistence
 
