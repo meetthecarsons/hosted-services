@@ -15,8 +15,8 @@ services:
     environment:
       # Set Backend ENV Variables Here
       ALLOW_SIGNUP: "false"
-      TZ: ${TZ:-America/Anchorage}
-      BASE_URL: ${BASE_URL:-https://food.eland-wyrm.ts.net}
+      TZ: America/Los_Angeles
+      BASE_URL: https://food.eland-wyrm.ts.net
     networks:
       - mealie
 

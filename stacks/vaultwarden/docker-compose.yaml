@@ -5,12 +5,12 @@ services:
     restart: unless-stopped
     user: "2000:2000" # Run as apps user to match NFS mount ownership
     environment:
-      - DOMAIN=${DOMAIN:-https://vault.${TAILSCALE_DOMAIN:-eland-wyrm.ts.net}}
-      - SIGNUPS_ALLOWED=${SIGNUPS_ALLOWED:-false}
-      - INVITATIONS_ALLOWED=${INVITATIONS_ALLOWED:-true}
-      - SHOW_PASSWORD_HINT=${SHOW_PASSWORD_HINT:-false}
-      - LOG_LEVEL=${LOG_LEVEL:-info}
-      - LOG_FILE=${LOG_FILE:-/data/vaultwarden.log}
+      - DOMAIN=https://vault.eland-wyrm.ts.net
+      - SIGNUPS_ALLOWED=false
+      - INVITATIONS_ALLOWED=true
+      - SHOW_PASSWORD_HINT=false
+      - LOG_LEVEL=info
+      - LOG_FILE=/data/vaultwarden.log
     ports:
       - "127.0.0.1:8000:80"  # Only accessible via localhost, Tailscale will proxy
     volumes:
