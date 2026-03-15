@@ -16,7 +16,7 @@ services:
     ports:
       - "127.0.0.1:8000:80"  # Only accessible via localhost, Tailscale will proxy
     volumes:
-      - ${VAULTWARDEN_DATA:-/mnt/ds-s-01/shared/vaultwarden/data}:/data
+      - /mnt/ds-s-01/shared/vaultwarden/data:/data
     networks:
       - vaultwarden
 
