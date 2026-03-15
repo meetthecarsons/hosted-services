@@ -33,12 +33,6 @@ services:
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - NET_ADMIN
-    depends_on:
-      - nextcloud-aio-mastercontainer
-
-networks:
-  nextcloud:
-    driver: bridge
 
 volumes:
   nextcloud_aio_mastercontainer:

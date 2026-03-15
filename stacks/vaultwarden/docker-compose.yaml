@@ -29,8 +29,6 @@ services:
       - /dev/net/tun:/dev/net/tun  # Required for Tailscale
     cap_add:
       - NET_ADMIN  # Required for Tailscale to manage network interfaces
-    depends_on:
-      - vaultwarden
 
 volumes:
   vaultwarden-ts:

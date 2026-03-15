@@ -16,8 +16,6 @@ services:
       ALLOW_SIGNUP: "false"
       TZ: America/Los_Angeles
       BASE_URL: https://food.eland-wyrm.ts.net
-    networks:
-      - mealie
 
   tailscale:
     image: tailscale/tailscale:latest
@@ -33,8 +31,6 @@ services:
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - NET_ADMIN
-    depends_on:
-      - mealie
 
 volumes:
   mealie-ts:
