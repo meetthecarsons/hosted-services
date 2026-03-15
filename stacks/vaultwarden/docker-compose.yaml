@@ -24,6 +24,7 @@ services:
     restart: unless-stopped
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
+      - TS_HOSTNAME=vault  # Hostname for this node on the tailnet
       - TS_EXTRA_ARGS=--advertise-tags=tag:containers
       - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
     volumes:
