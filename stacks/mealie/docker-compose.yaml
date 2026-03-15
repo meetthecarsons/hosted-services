@@ -13,9 +13,17 @@ services:
       - /mnt/ds-s-01/shared/mealie/data:/app/data/
     environment:
       # Set Backend ENV Variables Here
-      ALLOW_SIGNUP: "false"
+      ALLOW_SIGNUP: "true"
       TZ: America/Los_Angeles
       BASE_URL: https://food.eland-wyrm.ts.net
+      # Email configuration
+      SMTP_HOST: smtp.mailgun.org
+      SMTP_PORT: 587
+      SMTP_FROM_EMAIL: mealie@relay.b0rked.xyz
+      SMTP_FROM_NAME: Mealie
+      SMTP_USER: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_AUTH_STRATEGY: TLS
 
   tailscale:
     image: tailscale/tailscale:latest

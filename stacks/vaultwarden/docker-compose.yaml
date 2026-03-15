@@ -7,7 +7,7 @@ services:
     network_mode: service:tailscale  # Share network with Tailscale container for localhost access
     environment:
       - DOMAIN=https://vault.eland-wyrm.ts.net
-      - SIGNUPS_ALLOWED=false
+      - SIGNUPS_ALLOWED=true
       - INVITATIONS_ALLOWED=true
       - SHOW_PASSWORD_HINT=false
       - LOG_LEVEL=info
