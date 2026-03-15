@@ -1,20 +1,18 @@
 creation_rules:
   - path_regex: 'stacks/.*/.env(.sops)?$'
     input_type: dotenv
-    age:
-      - age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n
-      - age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7
+    age: [
+      'age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n',
+      'age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7'
+    ]
     # encrypt only sensitive variable values (keep keys readable)
     encrypted_regex: '^(WIREGUARD_PRIVATE_KEY|TS_AUTH_KEY)$'
 
   # broad rule for any YAML files (keep after specific rules)
   - path_regex: '.*\.ya?ml$'
     input_type: yaml
-    age:
-      - age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n
-      - age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7
+    age: [
+      'age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n',
+      'age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7'
+    ]
     encrypted_regex: '^(password|secret|api_key|token|private_key)$'
-
-# This rule targets tracked `stacks/*/.env.sops` files, treats them as dotenv,
-# encrypts only the `WIREGUARD_PRIVATE_KEY` values, and leaves other keys/values
-# readable for easier reviews. Add more keys to `encrypted_regex` as needed.
