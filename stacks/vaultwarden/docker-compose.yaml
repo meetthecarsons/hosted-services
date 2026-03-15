@@ -12,6 +12,7 @@ services:
       - SHOW_PASSWORD_HINT=false
       - LOG_LEVEL=info
       - LOG_FILE=/data/vaultwarden.log
+      - ADMIN_TOKEN=${ADMIN_TOKEN}  # Set this in your .env file for admin access
     volumes:
       - /mnt/ds-s-01/shared/vaultwarden/data:/data  # Bind mount to NFS for persistence
 
