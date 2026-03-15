@@ -22,14 +22,14 @@ services:
 
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: mealie-tailscale
+    container_name: ts-mealie
     restart: unless-stopped
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}
-      - TS_EXTRA_ARGS=--advertise-tags=tag:containerss
+      - TS_EXTRA_ARGS=--advertise-tags=tag:containers
       - TS_STATE_DIR=/var/lib/tailscale
     volumes:
-      - tailscale-mealie:/var/lib/tailscale
+      - ts-mealie:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - NET_ADMIN
@@ -43,5 +43,5 @@ networks:
     driver: bridge
 
 volumes:
-  tailscale-mealie:
+  ts-mealie:
     driver: local

@@ -23,14 +23,14 @@ services:
 
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: nextcloud-tailscale
+    container_name: ts-nextcloud
     restart: unless-stopped
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}
-      - TS_EXTRA_ARGS=--advertise-tags=tag:containerss
+      - TS_EXTRA_ARGS=--advertise-tags=tag:containers
       - TS_STATE_DIR=/var/lib/tailscale
     volumes:
-      - tailscale-nextcloud:/var/lib/tailscale
+      - ts-nextcloud:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - NET_ADMIN
@@ -46,5 +46,5 @@ networks:
 volumes:
   nextcloud_aio_mastercontainer:
     driver: local
-  tailscale-nextcloud:
+  ts-nextcloud:
     driver: local

@@ -20,14 +20,14 @@ services:
 
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: vaultwarden-tailscale
+    container_name: ts-vaultwarden
     restart: unless-stopped
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
-      - TS_EXTRA_ARGS=--advertise-tags=tag:containerss
+      - TS_EXTRA_ARGS=--advertise-tags=tag:containers
       - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
     volumes:
-      - tailscale-vaultwarden:/var/lib/tailscale  # Persistent state
+      - ts-vaultwarden:/var/lib/tailscale  # Persistent state
       - /dev/net/tun:/dev/net/tun  # Required for Tailscale
     cap_add:
       - NET_ADMIN  # Required for Tailscale to manage network interfaces
@@ -41,5 +41,5 @@ networks:
     driver: bridge
 
 volumes:
-  tailscale-vaultwarden:
+  ts-vaultwarden:
     driver: local
