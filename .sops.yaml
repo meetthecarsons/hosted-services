@@ -11,8 +11,8 @@ creation_rules:
   - path_regex: '.*\.ya?ml$'
     input_type: yaml
     age:
-      - 'age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n'
-      - 'age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7'
+      - age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n
+      - age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7
     encrypted_regex: '^(password|secret|api_key|token|private_key)$'
 
 # This rule targets tracked `stacks/*/.env.sops` files, treats them as dotenv,
