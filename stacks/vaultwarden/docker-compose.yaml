@@ -4,6 +4,7 @@ services:
     container_name: vaultwarden
     restart: unless-stopped
     user: "2000:2000" # Run as apps user to match NFS mount ownership
+    network_mode: service:tailscale  # Share network with Tailscale container for localhost access
     environment:
       - DOMAIN=https://vault.eland-wyrm.ts.net
       - SIGNUPS_ALLOWED=false
@@ -11,36 +12,26 @@ services:
       - SHOW_PASSWORD_HINT=false
       - LOG_LEVEL=info
       - LOG_FILE=/data/vaultwarden.log
-    ports:
-      - "127.0.0.1:8000:80"  # Only accessible via localhost, Tailscale will proxy
     volumes:
       - /mnt/ds-s-01/shared/vaultwarden/data:/data  # Bind mount to NFS for persistence
-    networks:
-      - vaultwarden
 
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: ts-vaultwarden
+    container_name: tailscale
+    hostname: vault  # Hostname for this node on the tailnet
     restart: unless-stopped
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
-      - TS_HOSTNAME=vault  # Hostname for this node on the tailnet
       - TS_EXTRA_ARGS=--advertise-tags=tag:containers
       - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
     volumes:
-      - ts-vaultwarden:/var/lib/tailscale  # Persistent state
+      - vaultwarden-ts:/var/lib/tailscale  # Persistent state
       - /dev/net/tun:/dev/net/tun  # Required for Tailscale
     cap_add:
       - NET_ADMIN  # Required for Tailscale to manage network interfaces
-    networks:
-      - vaultwarden
     depends_on:
       - vaultwarden
 
-networks:
-  vaultwarden:
-    driver: bridge
-
 volumes:
-  ts-vaultwarden:
+  vaultwarden-ts:
     driver: local

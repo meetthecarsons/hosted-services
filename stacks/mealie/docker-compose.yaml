@@ -4,8 +4,7 @@ services:
     container_name: mealie
     restart: always
     user: "2000:2000" # Run as apps user to match NFS mount ownership
-    ports:
-      - "127.0.0.1:9925:9000" # localhost only, Tailscale will proxy
+    network_mode: service:tailscale  # Share network with Tailscale container for localhost access
     deploy:
       resources:
         limits:
@@ -22,27 +21,21 @@ services:
 
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: ts-mealie
+    container_name: tailscale
     restart: unless-stopped
+    hostname: food  # Hostname for this node on the tailnet
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}
-      - TS_HOSTNAME=food  # Hostname for this node on the tailnet
       - TS_EXTRA_ARGS=--advertise-tags=tag:containers
       - TS_STATE_DIR=/var/lib/tailscale
     volumes:
-      - ts-mealie:/var/lib/tailscale
+      - mealie-ts:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - NET_ADMIN
-    networks:
-      - mealie
     depends_on:
       - mealie
 
-networks:
-  mealie:
-    driver: bridge
-
 volumes:
-  ts-mealie:
+  mealie-ts:
     driver: local

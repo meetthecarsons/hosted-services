@@ -4,6 +4,7 @@ services:
     image: nextcloud/all-in-one:latest
     restart: always
     user: "2000:2000" # Run as apps user to match NFS mount ownership
+    network_mode: service:tailscale  # Share network with Tailscale container
     ports:
       - 127.0.0.1:80:80 # For initial setup and HTTP access (localhost only, Tailscale will proxy)
       - 127.0.0.1:443:443 # For HTTPS access (localhost only, managed by AIO's Caddy or external reverse proxy)
@@ -16,26 +17,22 @@ services:
       - /mnt/ds-s-01/shared/nextcloud/data:/mnt/ncdata # Bind mount for Nextcloud data
       - /var/run/docker.sock:/var/run/docker.sock # Docker socket for container management
       # - /path/to/your/nextcloud/backup:/mnt/backup # Optional: for AIO backups
-    networks:
-      - nextcloud
     container_name: nextcloud-aio-mastercontainer
 
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: ts-nextcloud
+    container_name: tailscale
+    hostname: nextcloud  # Hostname for this node on the tailnet
     restart: unless-stopped
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}
-      - TS_HOSTNAME=nextcloud  # Hostname for this node on the tailnet
       - TS_EXTRA_ARGS=--advertise-tags=tag:containers
       - TS_STATE_DIR=/var/lib/tailscale
     volumes:
-      - ts-nextcloud:/var/lib/tailscale
+      - nextcloud-ts:/var/lib/tailscale
       - /dev/net/tun:/dev/net/tun
     cap_add:
       - NET_ADMIN
-    networks:
-      - nextcloud
     depends_on:
       - nextcloud-aio-mastercontainer
 
@@ -46,5 +43,5 @@ networks:
 volumes:
   nextcloud_aio_mastercontainer:
     driver: local
-  ts-nextcloud:
+  nextcloud-ts:
     driver: local
