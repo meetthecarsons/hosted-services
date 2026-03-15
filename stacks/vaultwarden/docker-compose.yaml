@@ -9,7 +9,6 @@ services:
       - SIGNUPS_ALLOWED=${SIGNUPS_ALLOWED:-false}
       - INVITATIONS_ALLOWED=${INVITATIONS_ALLOWED:-true}
       - SHOW_PASSWORD_HINT=${SHOW_PASSWORD_HINT:-false}
-      - DATABASE_URL=${DATABASE_URL:-sqlite:///data/db.sqlite3}
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_FILE=${LOG_FILE:-/data/vaultwarden.log}
     ports:
