@@ -1,10 +1,9 @@
 creation_rules:
   - path_regex: 'stacks/.*/.env(.sops)?$'
     input_type: dotenv
-    age: [
-      'age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n',
-      'age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7'
-    ]
+    age:
+      - age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n
+      - age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7
     # encrypt only sensitive variable values (keep keys readable)
     encrypted_regex: '^(WIREGUARD_PRIVATE_KEY|TS_AUTH_KEY)$'
 
