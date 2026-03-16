@@ -147,7 +147,8 @@ volumes:
       o: bind
       device: /mnt/ds-s-01/shared/nextcloud/db
   redis:
-    drive_opts:
+    driver: local
+    driver_opts:
       type: none
       o: bind
       device: /mnt/ds-s-01/shared/nextcloud/redis
