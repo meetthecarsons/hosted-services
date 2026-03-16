@@ -141,3 +141,7 @@ volumes:
     driver: local
   collabora-ts:
     driver: local
+
+networks:
+  nextcloud-internal:
+    driver: bridge
