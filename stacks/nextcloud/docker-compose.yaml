@@ -13,7 +13,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - /mnt/ds-s-01/shared/nextcloud/db:/var/lib/mysql
+      - db:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
       interval: 10s
@@ -29,7 +29,7 @@ services:
     networks:
       - nextcloud-internal
     volumes:
-      - /mnt/ds-s-01/shared/nextcloud/redis:/data
+      - redis:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -70,7 +70,7 @@ services:
       PHP_MEMORY_LIMIT: 512M
       PHP_UPLOAD_LIMIT: 512M
     volumes:
-      - /mnt/ds-s-01/shared/nextcloud/data:/var/www/html
+      - nextcloud:/var/www/html
 
   nginx:
     image: nginx:alpine
@@ -80,8 +80,9 @@ services:
     depends_on:
       - nextcloud
     volumes:
-      - /mnt/ds-s-01/shared/nextcloud/data:/var/www/html:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    volumes-from:
+      - nextcloud
 
   nextcloud-ts:
     image: tailscale/tailscale:latest
@@ -133,7 +134,23 @@ volumes:
     driver: local
   collabora-ts:
     driver: local
-
+  nextcloud:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/ds-s-01/shared/nextcloud/data
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /mnt/ds-s-01/shared/nextcloud/db
+  redis:
+    drive_opts:
+      type: none
+      o: bind
+      device: /mnt/ds-s-01/shared/nextcloud/redis
 networks:
   nextcloud-internal:
     driver: bridge
