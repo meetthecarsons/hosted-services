@@ -81,7 +81,7 @@ services:
       - nextcloud
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    volumes-from:
+    volumes_from:
       - nextcloud
 
   nextcloud-ts:
