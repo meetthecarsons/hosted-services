@@ -21,7 +21,7 @@ services:
       SMTP_PORT: 587
       SMTP_FROM_EMAIL: mealie@relay.b0rked.xyz
       SMTP_FROM_NAME: Mealie
-      SMTP_USER: ${SMTP_USERNAME}
+      SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       SMTP_AUTH_STRATEGY: TLS
 
