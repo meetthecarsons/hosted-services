@@ -1,23 +1,104 @@
-version: '3'
 services:
-  nextcloud-aio-mastercontainer:
-    image: nextcloud/all-in-one:latest
+  db:
+    image: mariadb:11
+    container_name: nextcloud-db
     restart: always
-    network_mode: service:tailscale  # Share network with Tailscale container
+    command: --transaction-isolation=READ-COMMITTED --sql-mode=TRADITIONAL
     environment:
-      - NEXTCLOUD_DATADIR=/mnt/ncdata # Adjust if you want to store data elsewhere
-      # - NEXTCLOUD_HOST=your-domain.com # Uncomment and set your domain if not using a reverse proxy
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - nextcloud_aio_mastercontainer:/mnt/docker-aio-config # Required: named volume for AIO
-      - /mnt/ds-s-01/shared/nextcloud/data:/mnt/ncdata # Bind mount for Nextcloud data
-      - /var/run/docker.sock:/var/run/docker.sock # Docker socket for container management
-      # - /path/to/your/nextcloud/backup:/mnt/backup # Optional: for AIO backups
-    container_name: nextcloud-aio-mastercontainer
+      - /mnt/ds-s-01/shared/nextcloud/db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: nextcloud-redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - /mnt/ds-s-01/shared/nextcloud/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  collabora:
+    image: collabora/code:latest
+    container_name: nextcloud-collabora
+    restart: always
+    network_mode: service:tailscale
+    environment:
+      - extra_params=--setconfigvalue seccomp.allowlist='/usr/bin/python3'
+      - VIRTUAL_HOST=${COLLABORA_HOST}
+      - LETSENCRYPT_HOST=${COLLABORA_HOST}
+    cap_add:
+      - SYS_ADMIN
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9980/health/l"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  nextcloud:
+    image: nextcloud:28-fpm-alpine
+    container_name: nextcloud
+    restart: always
+    user: "2000:2000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: db
+      REDIS_HOST: redis
+      NEXTCLOUD_ADMIN_USER: ${NEXTCLOUD_ADMIN_USER}
+      NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
+      NEXTCLOUD_TRUSTED_DOMAINS: "cloud.eland-wyrm.ts.net"
+      OVERWRITEPROTOCOL: https
+      OVERWRITEHOST: cloud.eland-wyrm.ts.net
+      # SMTP configuration
+      SMTP_HOST: smtp.mailgun.org
+      SMTP_PORT: 587
+      SMTP_NAME: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_SECURE: tls
+      MAIL_FROM_ADDRESS: ${NEXTCLOUD_MAIL_FROM}
+    volumes:
+      - /mnt/ds-s-01/shared/nextcloud/data:/var/www/html
+    network_mode: service:tailscale
+
+  nextcloud-nginx:
+    image: nginx:alpine
+    container_name: nextcloud-nginx
+    restart: always
+    depends_on:
+      - nextcloud
+    volumes:
+      - /mnt/ds-s-01/shared/nextcloud/data:/var/www/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    network_mode: service:tailscale
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/status.php"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   tailscale:
     image: tailscale/tailscale:latest
-    container_name: tailscale
-    hostname: nextcloud  # Hostname for this node on the tailnet
+    container_name: nextcloud-ts
+    hostname: nextcloud
     restart: unless-stopped
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}
@@ -30,7 +111,5 @@ services:
       - NET_ADMIN
 
 volumes:
-  nextcloud_aio_mastercontainer:
-    driver: local
   nextcloud-ts:
     driver: local
