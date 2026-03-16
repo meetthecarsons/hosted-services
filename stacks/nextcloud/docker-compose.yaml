@@ -84,6 +84,30 @@ services:
     volumes_from:
       - nextcloud
 
+  nextcloud-cron:
+    image: nextcloud:33-fpm-alpine
+    container_name: nextcloud-cron
+    restart: always
+    networks:
+      - nextcloud-internal
+    depends_on:
+      - nextcloud
+      - db
+      - redis
+    volumes_from:
+      - nextcloud
+    environment:
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: db
+      REDIS_HOST: redis
+    entrypoint: |
+      sh -c 'while true; do
+        php -f /var/www/html/cron.php
+        sleep 300
+      done'
+
   nextcloud-ts:
     image: tailscale/tailscale:latest
     container_name: nextcloud-ts
