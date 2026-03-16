@@ -59,12 +59,16 @@ services:
       NEXTCLOUD_TRUSTED_DOMAINS: "cloud.eland-wyrm.ts.net"
       OVERWRITEPROTOCOL: https
       OVERWRITEHOST: cloud.eland-wyrm.ts.net
+      OVERWRITEWEBROOT: /
+      OVERWRITECONDADDR: ^100\.
       SMTP_HOST: smtp.mailgun.org
       SMTP_PORT: 587
       SMTP_NAME: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       SMTP_SECURE: tls
       MAIL_FROM_ADDRESS: ${NEXTCLOUD_MAIL_FROM}
+      PHP_MEMORY_LIMIT: 512M
+      PHP_UPLOAD_LIMIT: 512M
     volumes:
       - /mnt/ds-s-01/shared/nextcloud/data:/var/www/html
 
