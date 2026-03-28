@@ -13,7 +13,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - /mnt/ds-s-01/shared/nextcloud/db:/var/lib/mysql
+      - ${DATA_DIR}/db:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
       interval: 10s
@@ -29,7 +29,7 @@ services:
     networks:
       - nextcloud-internal
     volumes:
-      - /mnt/ds-s-01/shared/nextcloud/redis:/data
+      - ${DATA_DIR}/redis:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -56,11 +56,11 @@ services:
       REDIS_HOST: redis
       NEXTCLOUD_ADMIN_USER: ${NEXTCLOUD_ADMIN_USER}
       NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
-      NEXTCLOUD_TRUSTED_DOMAINS: "cloud.eland-wyrm.ts.net 100.100.6.126 100.87.72.18"
+      NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_TRUSTED_DOMAINS}
       OVERWRITEPROTOCOL: https
-      OVERWRITEHOST: cloud.eland-wyrm.ts.net
+      OVERWRITEHOST: ${NEXTCLOUD_HOST}
       OVERWRITEWEBROOT: /
-      OVERWRITE_CLI_URL: https://cloud.eland-wyrm.ts.net
+      OVERWRITE_CLI_URL: https://${NEXTCLOUD_HOST}
       TRUSTED_PROXIES_0: "127.0.0.1"
       TRUSTED_PROXIES_1: "172.0.0.0/8"
       TRUSTED_PROXIES_2: "100.0.0.0/8"
@@ -73,7 +73,7 @@ services:
       PHP_MEMORY_LIMIT: 512M
       PHP_UPLOAD_LIMIT: 512M
     volumes:
-      - /mnt/ds-s-01/shared/nextcloud/data:/var/www/html
+      - ${DATA_DIR}/data:/var/www/html
 
   nginx:
     image: nginx:alpine
@@ -114,7 +114,7 @@ services:
   nextcloud-ts:
     image: tailscale/tailscale:latest
     container_name: nextcloud-ts
-    hostname: cloud
+    hostname: ${TS_HOSTNAME}
     restart: unless-stopped
     networks:
       - nextcloud-internal

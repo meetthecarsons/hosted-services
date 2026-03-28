@@ -3,7 +3,7 @@
 age_key.txt
 
 # Keep examples tracked
-**/.env.example
+!**/.env.example
 
 # Node / Python defaults (harmless)
 venv/

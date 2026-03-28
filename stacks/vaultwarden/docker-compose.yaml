@@ -6,7 +6,7 @@ services:
     user: "2000:2000" # Run as apps user to match NFS mount ownership
     network_mode: service:tailscale  # Share network with Tailscale container for localhost access
     environment:
-      - DOMAIN=https://vault.eland-wyrm.ts.net
+      - DOMAIN=https://${DOMAIN}
       - SIGNUPS_ALLOWED=true
       - INVITATIONS_ALLOWED=true
       - SHOW_PASSWORD_HINT=false
@@ -21,12 +21,12 @@ services:
       - SMTP_FROM_NAME=Vaultwarden
       - SMTP_SECURITY=starttls
     volumes:
-      - /mnt/ds-s-01/shared/vaultwarden/data:/data  # Bind mount to NFS for persistence
+      - ${DATA_DIR}:/data  # Bind mount to NFS for persistence
 
   tailscale:
     image: tailscale/tailscale:latest
     container_name: vaultwarden-ts
-    hostname: vault  # Hostname for this node on the tailnet
+    hostname: ${TS_HOSTNAME}  # Hostname for this node on the tailnet
     restart: unless-stopped
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login

@@ -6,15 +6,15 @@ services:
     environment:
       - PUID=${PUID:-1000} # user ID (override in .env)
       - PGID=${PGID:-1000} # group ID
-      - TZ=America/Los_Angeles
+      - TZ=${TZ}
     volumes:
-      - /mnt/fast-pool-01/appdata/jellyfin/config:/config
-      - /mnt/fast-pool-01/appdata/jellyfin/cache:/cache
-      - /mnt/bulk-pool-01/data/media:/data
+      - ${JELLYFIN_CONFIG}:/config
+      - ${JELLYFIN_CACHE}:/cache
+      - ${JELLYFIN_MEDIA}:/data
     devices:
       - /dev/dri:/dev/dri # Pass the Intel GPU device
     group_add:
       - "44" # Add the 'video' group (or the group owning /dev/dri/renderD128)
     ports:
-      - "8096:8096"  # allow direct LAN clients to reach Jellyfin
+      - "${JELLYFIN_PORT}:8096"  # allow direct LAN clients to reach Jellyfin
     restart: unless-stopped

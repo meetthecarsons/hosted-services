@@ -24,7 +24,7 @@ services:
 
       - VPN_PORT_FORWARDING=on
       - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8081/api/v2/app/setPreferences 2>&1'
-      - SERVER_CITIES=Seattle
+      - SERVER_CITIES=${VPN_SERVER_CITIES}
     restart: unless-stopped
     # GLUETUN: VPN tunnel - routes all container traffic through VPN for privacy
 
@@ -34,13 +34,13 @@ services:
     container_name: qbittorrent
     network_mode: "service:gluetun"  # Uses gluetun's VPN network
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
       - WEBUI_PORT=8081
     volumes:
-      - /mnt/fast-pool-01/appdata/qbittorrent/config:/config
-      - /mnt/bulk-pool-01/data/torrents:/data/torrents
+      - ${APPDATA_DIR}/qbittorrent/config:/config
+      - ${DATA_DIR}/torrents:/data/torrents
     depends_on:
       - gluetun
     restart: unless-stopped
@@ -52,12 +52,12 @@ services:
     container_name: radarr
     network_mode: "service:gluetun"  # Uses gluetun's VPN network
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /mnt/fast-pool-01/appdata/radarr/config:/config
-      - /mnt/bulk-pool-01/data:/data
+      - ${APPDATA_DIR}/radarr/config:/config
+      - ${DATA_DIR}:/data
     depends_on:
       - gluetun
     restart: unless-stopped
@@ -69,12 +69,12 @@ services:
     container_name: radarr-anime
     network_mode: "service:gluetun"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /mnt/fast-pool-01/appdata/radarr-anime/config:/config
-      - /mnt/bulk-pool-01/data:/data
+      - ${APPDATA_DIR}/radarr-anime/config:/config
+      - ${DATA_DIR}:/data
     depends_on:
       - gluetun
     restart: unless-stopped
@@ -85,12 +85,12 @@ services:
     container_name: sonarr
     network_mode: "service:gluetun"  # Uses gluetun's VPN network
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /mnt/fast-pool-01/appdata/sonarr/config:/config
-      - /mnt/bulk-pool-01/data:/data
+      - ${APPDATA_DIR}/sonarr/config:/config
+      - ${DATA_DIR}:/data
     depends_on:
       - gluetun
     restart: unless-stopped
@@ -102,12 +102,12 @@ services:
     container_name: sonarr-anime
     network_mode: "service:gluetun"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /mnt/fast-pool-01/appdata/sonarr-anime/config:/config
-      - /mnt/bulk-pool-01/data:/data
+      - ${APPDATA_DIR}/sonarr-anime/config:/config
+      - ${DATA_DIR}:/data
     depends_on:
       - gluetun
     restart: unless-stopped
@@ -119,11 +119,11 @@ services:
     network_mode: "service:gluetun"  # Uses gluetun's VPN network
 
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /mnt/fast-pool-01/appdata/prowlarr/config:/config
+      - ${APPDATA_DIR}/prowlarr/config:/config
     depends_on:
       - gluetun
     restart: unless-stopped
@@ -135,12 +135,12 @@ services:
     container_name: bazarr
     network_mode: "service:gluetun"  # Uses gluetun's VPN network
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Los_Angeles
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
     volumes:
-      - /mnt/fast-pool-01/appdata/bazarr/config:/config
-      - /mnt/bulk-pool-01/data:/data:ro
+      - ${APPDATA_DIR}/bazarr/config:/config
+      - ${DATA_DIR}:/data:ro
     depends_on:
       - gluetun
       - sonarr
@@ -154,13 +154,13 @@ services:
     container_name: recyclarr
     network_mode: "service:gluetun"  # Uses gluetun's VPN network
     environment:
-      - TZ=America/Los_Angeles
+      - TZ=${TZ}
     volumes:
-      - /mnt/fast-pool-01/appdata/recyclarr/config:/config
+      - ${APPDATA_DIR}/recyclarr/config:/config
       # Mount Sonarr/Radarr configs for database access (optional but recommended)
-      - /mnt/fast-pool-01/appdata/sonarr/config:/sonarr:ro
-      - /mnt/fast-pool-01/appdata/radarr/config:/radarr:ro
-      - /mnt/fast-pool-01/appdata/sonarr-anime/config:/sonarr-anime:ro
-      - /mnt/fast-pool-01/appdata/radarr-anime/config:/radarr-anime:ro
+      - ${APPDATA_DIR}/sonarr/config:/sonarr:ro
+      - ${APPDATA_DIR}/radarr/config:/radarr:ro
+      - ${APPDATA_DIR}/sonarr-anime/config:/sonarr-anime:ro
+      - ${APPDATA_DIR}/radarr-anime/config:/radarr-anime:ro
     restart: "no"  # Run on-demand or via cron, not always running
     # RECYCLARR: Automates Trash Guide custom format updates for Sonarr/Radarr

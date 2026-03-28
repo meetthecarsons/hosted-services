@@ -72,7 +72,7 @@ services:
   immich-ts:
     image: tailscale/tailscale:latest
     container_name: immich-ts
-    hostname: photos
+    hostname: ${TS_HOSTNAME}
     restart: unless-stopped
     networks:
       - immich-internal

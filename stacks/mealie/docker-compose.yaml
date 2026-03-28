@@ -10,12 +10,12 @@ services:
         limits:
           memory: 1000M
     volumes:
-      - /mnt/ds-s-01/shared/mealie/data:/app/data/
+      - ${DATA_DIR}:/app/data/
     environment:
       # Set Backend ENV Variables Here
       ALLOW_SIGNUP: "true"
       TZ: America/Los_Angeles
-      BASE_URL: https://food.eland-wyrm.ts.net
+      BASE_URL: https://${DOMAIN}
       # Email configuration
       SMTP_HOST: smtp.mailgun.org
       SMTP_PORT: 587
@@ -29,7 +29,7 @@ services:
     image: tailscale/tailscale:latest
     container_name: mealie-ts
     restart: unless-stopped
-    hostname: food  # Hostname for this node on the tailnet
+    hostname: ${TS_HOSTNAME}  # Hostname for this node on the tailnet
     environment:
       - TS_AUTH_KEY=${TS_AUTH_KEY}
       - TS_EXTRA_ARGS=--advertise-tags=tag:containers
