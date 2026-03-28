@@ -14,7 +14,7 @@ services:
     environment:
       # Set Backend ENV Variables Here
       ALLOW_SIGNUP: "true"
-      TZ: America/Los_Angeles
+      TZ: ${TZ}
       BASE_URL: https://${DOMAIN}
       # Email configuration
       SMTP_HOST: smtp.mailgun.org
