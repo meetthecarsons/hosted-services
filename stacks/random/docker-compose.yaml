@@ -1,0 +1,7 @@
+services:
+  random:
+    image: alpine:latest
+    container_name: random
+    pull_policy: always
+    command: ["sh", "-c", "while true; do printf '[%s] random number: %s\n' \"$(date -Iseconds)\" \"$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 32)\"; sleep 2; done"]
+    restart: unless-stopped
