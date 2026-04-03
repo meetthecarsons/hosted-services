@@ -8,6 +8,6 @@ services:
       - STACK_AGENT_LOG_LEVEL=info
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/stack-agent/config.yml:/etc/stack-agent/config.yml:ro
-      - /etc/stacks:/etc/stacks:ro
-      - /var/lib/stack-agent:/var/lib/stack-agent
+      - ./config.yml:/opt/steward/config.yml:ro
+      - ./config:/opt/steward/config:ro
+      - ./data:/opt/steward/data

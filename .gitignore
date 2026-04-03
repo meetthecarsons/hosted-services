@@ -15,3 +15,7 @@ stacks/*/.env.local
 
 # ignore any data directories inside stacks
 stacks/*/data/
+
+# steward per-host local secrets and state (never committed)
+steward/*/config/
+steward/*/data/
