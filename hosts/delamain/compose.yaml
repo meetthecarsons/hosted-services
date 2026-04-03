@@ -9,5 +9,5 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/stack-agent/config.yml:/etc/stack-agent/config.yml:ro
-      - /etc/stacks:/etc/stacks:ro
+      - /opt/steward/config:/opt/steward/config:ro
       - /var/lib/stack-agent:/var/lib/stack-agent
