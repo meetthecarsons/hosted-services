@@ -5,6 +5,10 @@ services:
     restart: unless-stopped
     environment:
       EULA: "TRUE"
+      GAMEMODE: ${GAMEMODE}
+      DIFFICULTY: ${DIFFICULTY}
+      LEVEL_SEED: ${LEVEL_SEED}
+      ENABLE_LAN_VISIBILITY: ${ENABLE_LAN_VISIBILITY}
     ports:
       - "19132:19132/udp"
     volumes:
