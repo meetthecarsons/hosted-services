@@ -1,0 +1,37 @@
+services:
+  glance:
+    container_name: glance
+    image: glanceapp/glance
+    restart: unless-stopped
+    user: 2000:2000
+    network_mode: service:tailscale  # Share network with Tailscale container for localhost access
+    volumes:
+      - /mnt/fast-pool-01/appdata/glance/config:/app/config
+      - /mnt/fast-pool-01/appdata/glance/assets:/app/assets
+      - /etc/localtime:/etc/localtime:ro
+      # Optionally, also mount docker socket if you want to use the docker containers widget
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    #ports:
+    #  - 8080:8080
+    env_file: .env
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: glance-ts
+    hostname: glance  # Hostname for this node on the tailnet
+    restart: unless-stopped
+    environment:
+      - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
+      - TS_EXTRA_ARGS=--advertise-tags=tag:containers
+      - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
+      - TS_SERVE_CONFIG=/config/serve.json
+    volumes:
+      - glance-ts:/var/lib/tailscale  # Persistent state
+      - /dev/net/tun:/dev/net/tun  # Required for Tailscale
+      - ./ts-serve.json:/config/serve.json:ro
+    cap_add:
+      - NET_ADMIN  # Required for Tailscale to manage network interfaces
+
+volumes:
+  glance-ts:
+    driver: local
+

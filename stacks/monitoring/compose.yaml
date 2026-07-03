@@ -1,0 +1,63 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    user: "2000:2000"
+    network_mode: service:tailscale
+    volumes:
+      - ./config/prometheus:/etc/prometheus
+      - /mnt/fast-pool-01/appdata/prometheus/data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d
+    restart: unless-stopped
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    network_mode: host
+    pid: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - --path.procfs=/host/proc
+      - --path.sysfs=/host/sys
+      - --path.rootfs=/rootfs
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    user: "2000:2000"
+    network_mode: service:tailscale
+    volumes:
+      - /mnt/fast-pool-01/appdata/grafana/data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    #ports:
+    #  - "3000:3000"
+    restart: unless-stopped
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: monitoring-ts
+    hostname: graf  # Hostname for this node on the tailnet
+    restart: unless-stopped
+    environment:
+      - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
+      - TS_EXTRA_ARGS=--advertise-tags=tag:containers
+      - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
+      - TS_SERVE_CONFIG=/config/serve.json
+    volumes:
+      - monitoring-ts:/var/lib/tailscale  # Persistent state
+      - /dev/net/tun:/dev/net/tun  # Required for Tailscale
+      - ./ts-serve.json:/config/serve.json:ro
+    cap_add:
+      - NET_ADMIN  # Required for Tailscale to manage network interfaces
+
+volumes:
+  monitoring-ts:
+    driver: local
+
