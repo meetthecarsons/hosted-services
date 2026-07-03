@@ -7,13 +7,12 @@ help:
 	@echo "  help                      Show this help"
 	@echo "  deploy SERVICE=<name>     Sync stack to $(DEPLOY_ROOT)/<name>, decrypt env, compose up -d"
 	@echo "  deploy-diff SERVICE=<name> Preview what deploy would change (no writes)"
-	@echo "  up SERVICE=<name>         Start stack (detached)"
-	@echo "  down SERVICE=<name>       Stop stack"
-	@echo "  pull SERVICE=<name>       Pull images for stack"
-	@echo "  logs SERVICE=<name>       Follow stack logs"
+	@echo "  up SERVICE=<name>         Start deployed stack (no sync; use deploy for changes)"
+	@echo "  down SERVICE=<name>       Stop deployed stack"
+	@echo "  pull SERVICE=<name>       Pull images for deployed stack"
+	@echo "  logs SERVICE=<name>       Follow deployed stack logs"
 	@echo ""
 	@echo "SOPS targets:"
-	@echo "  sops-up SERVICE=<name>    Decrypt stack .env.sops to a temp and run compose"
 	@echo "  sops-reencrypt FILE=...    Re-encrypt a single .sops file using .sops.yaml policy"
 	@echo "  sops-reencrypt-all         Re-encrypt all .sops files under stacks/ using .sops.yaml policy"
 	@echo "  sops-encrypt FILE=...     Encrypt a plaintext env file -> FILE.sops"
@@ -59,41 +58,22 @@ deploy-diff:
 	rsync -avn --delete --filter='P /.env' stacks/$(SERVICE)/ "$(DEPLOY_ROOT)/$(SERVICE)/"
 	@echo "(dry run — nothing was changed; deletions only apply with DELETE=1)"
 
-up:
-	@echo "usage: make up SERVICE=<name>"
-	docker compose -f stacks/$(SERVICE)/docker-compose.yaml up -d
-
-
-down:
-	docker compose -f stacks/$(SERVICE)/docker-compose.yaml down
-
-
-pull:
-	docker compose -f stacks/$(SERVICE)/docker-compose.yaml pull
-
-
-logs:
-	docker compose -f stacks/$(SERVICE)/docker-compose.yaml logs -f
-
-create-contexts:
-	docker context create ds-s-01 --docker "host=ssh://ds-s-01.lan.internal" || true
-	docker context ls --format '{{.Name}}\t{{.DockerEndpoint}}' | grep "^media-server\t" || exit 1
-	docker context create apps01 --docker "host=ssh://ds-s-01.lan.internal" || true
-	docker context ls --format '{{.Name}}\t{{.DockerEndpoint}}' | grep "^media-server\t" || exit 1
+# Day-2 operations against the *deployed* copy. None of these sync the repo;
+# use `make deploy` to push changes out.
+up:   COMPOSE_CMD = up -d
+down: COMPOSE_CMD = down
+pull: COMPOSE_CMD = pull
+logs: COMPOSE_CMD = logs -f
+up down pull logs:
+	@if [ -z "$(SERVICE)" ]; then echo "usage: make $@ SERVICE=<name>"; exit 1; fi
+	@if [ ! -d "$(DEPLOY_ROOT)/$(SERVICE)" ]; then echo "not deployed: $(DEPLOY_ROOT)/$(SERVICE) (run make deploy SERVICE=$(SERVICE))"; exit 1; fi
+	cd "$(DEPLOY_ROOT)/$(SERVICE)" && docker compose $(COMPOSE_CMD)
 
 # Encrypt or decrypt a passed-in file.
 # Usage:
 #   make FILE=stacks/arrgh-proton/.env sops-encrypt
 #   make FILE=stacks/arrgh-proton/.env.sops sops-decrypt
-.PHONY: sops-up sops-reencrypt sops-reencrypt-all sops-encrypt sops-decrypt
-
-# Convenience: decrypt a tracked .env.sops, run the stack, then remove plaintext.
-# Usage: make SERVICE=arrgh-proton sops-up
-sops-up:
-	@echo "Decrypting stacks/$(SERVICE)/.env.sops -> using secure temp file and running compose"
-	@make sops-decrypt FILE=stacks/$(SERVICE)/.env.sops && \
-		docker compose -f stacks/$(SERVICE)/docker-compose.yaml up -d
-
+.PHONY: sops-reencrypt sops-reencrypt-all sops-encrypt sops-decrypt
 
 sops-reencrypt:
 	@if [ -z "$(FILE)" ]; then echo "usage: make sops-reencrypt FILE=path/.env.sops"; exit 1; fi
