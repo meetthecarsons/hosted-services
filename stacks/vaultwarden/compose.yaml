@@ -32,8 +32,10 @@ services:
       - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
       - TS_EXTRA_ARGS=--advertise-tags=tag:containers
       - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
+      - TS_SERVE_CONFIG=/config/serve.json  # HTTPS proxy config (declarative; matches the other sidecars)
     volumes:
       - vaultwarden-ts:/var/lib/tailscale  # Persistent state
+      - ./ts-serve.json:/config/serve.json:ro
       - /dev/net/tun:/dev/net/tun  # Required for Tailscale
     cap_add:
       - NET_ADMIN  # Required for Tailscale to manage network interfaces
