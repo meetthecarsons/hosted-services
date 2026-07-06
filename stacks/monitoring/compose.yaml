@@ -60,4 +60,3 @@ services:
 volumes:
   monitoring-ts:
     driver: local
-

@@ -74,12 +74,15 @@ This repository tracks encrypted secret artifacts (`.env.sops`) and treats plain
 
 Install examples:
 
-- Nix (user profile):
+- Nix (flake devShell — no system/profile changes):
 
    ```bash
-   nix profile install nixpkgs#pre-commit nixpkgs#sops nixpkgs#age nixpkgs#shfmt nixpkgs#shellcheck nixpkgs#yamllint nixpkgs#hadolint
-   python -m pip install --user detect-secrets
+   nix develop
    ```
+
+  This drops you into a shell with `pre-commit`, `sops`, `age`, `shfmt`, `shellcheck`, `yamllint`,
+  `hadolint`, and `detect-secrets` on `PATH`, pinned via `flake.lock`. Nothing is installed outside
+  this repo checkout.
 
 - Debian / Ubuntu (apt + releases):
 
