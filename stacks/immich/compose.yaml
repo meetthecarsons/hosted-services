@@ -32,10 +32,15 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    # -openvino variant + /dev/dri enables Intel Quick Sync hw accel for
+    # facial recognition / smart search (CLIP). See
+    # https://docs.immich.app/features/ml-hardware-acceleration
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}-openvino
     network_mode: service:immich-ts
     volumes:
       - model-cache:/cache
+    devices:
+      - /dev/dri:/dev/dri
     env_file:
       - .env
     depends_on:
