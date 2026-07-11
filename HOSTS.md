@@ -12,7 +12,7 @@ tardis (ds-s-01, 192.168.60.80 / tailnet "tardis")
   - glance            # dashboard (tailnet "glance")
   - immich            # photos (tailnet "photos")
   - jellyfin          # media server (tailnet "jelly")
-  - monitoring        # prometheus + grafana + node_exporter (tailnet "graf")
+  - monitoring        # prometheus + grafana + alertmanager + ntfy bridge + cadvisor + node_exporter (tailnet "graf")
   - vaultwarden       # password manager (tailnet "vault")
 
 crafty (192.168.60.81 / tailnet "crafty")

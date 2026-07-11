@@ -1,0 +1,71 @@
+groups:
+  - name: hosts
+    rules:
+      - alert: HostDown
+        expr: up{job="node"} == 0
+        for: 4m
+        labels:
+          severity: critical
+        annotations:
+          summary: "{{ $labels.instance }} is down"
+          description: >-
+            node_exporter target unreachable for 4+ minutes. For galileo this
+            usually means a power event at the site — watch the info topic
+            for its boot message.
+
+      - alert: RootDiskFillHigh
+        expr: >-
+          node_filesystem_avail_bytes{mountpoint="/", fstype!~"tmpfs|overlay"}
+            / node_filesystem_size_bytes{mountpoint="/", fstype!~"tmpfs|overlay"}
+          < 0.15
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $labels.instance }} root filesystem below 15% free"
+
+  - name: tardis-storage
+    rules:
+      # Pool-wide free space is the ONLY bulk-pool signal — full individual
+      # mergerfs branches are normal operation (mfs placement, by design).
+      - alert: BulkPoolLow
+        expr: node_filesystem_avail_bytes{mountpoint="/mnt/bulk-pool-01"} < 1.5e+12
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "bulk-pool-01 below 1.5T free — plan the next drive"
+          description: "Buy threshold is ~1T. fstab's /mnt/hdd* glob auto-adds hdd5."
+
+      - alert: BulkPoolCritical
+        expr: node_filesystem_avail_bytes{mountpoint="/mnt/bulk-pool-01"} < 1.0e+12
+        for: 1h
+        labels:
+          severity: critical
+        annotations:
+          summary: "bulk-pool-01 below 1T free — buy the next drive"
+
+      - alert: FastPoolLow
+        expr: >-
+          node_filesystem_avail_bytes{fstype="zfs", mountpoint="/mnt/fast-pool-01/appdata"}
+            / node_filesystem_size_bytes{fstype="zfs", mountpoint="/mnt/fast-pool-01/appdata"}
+          < 0.15
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "fast-pool-01 below 15% free (read via appdata dataset)"
+
+  - name: containers
+    rules:
+      # cAdvisor only reports containers it can see; a container that
+      # disappears stops updating container_last_seen. Deliberately removed
+      # containers alert once and age out of the 24h bridge cache.
+      - alert: ContainerGone
+        expr: >-
+          time() - container_last_seen{name!=""} > 300
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "container {{ $labels.name }} not seen for 5+ minutes"

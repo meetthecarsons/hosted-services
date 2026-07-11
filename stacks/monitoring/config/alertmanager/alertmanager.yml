@@ -1,0 +1,15 @@
+# Alertmanager routes everything to the ntfy bridge (same network namespace
+# via the tailscale sidecar). The bridge owns the topic + priority mapping;
+# this file stays secret-free and committed.
+route:
+  receiver: ntfy
+  group_by: [alertname, instance]
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+
+receivers:
+  - name: ntfy
+    webhook_configs:
+      - url: http://localhost:8080/
+        send_resolved: true

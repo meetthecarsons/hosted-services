@@ -40,6 +40,61 @@ services:
     #  - "3000:3000"
     restart: unless-stopped
 
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    user: "2000:2000"
+    network_mode: service:tailscale
+    volumes:
+      - ./config/alertmanager:/etc/alertmanager
+      - /mnt/fast-pool-01/appdata/alertmanager/data:/alertmanager
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+      - --storage.path=/alertmanager
+      - --cluster.listen-address=
+    restart: unless-stopped
+
+  # Renders the ntfy-alertmanager config from the template, substituting the
+  # secret topic from the env. Runs once per `up`; the bridge waits for it.
+  ntfy-bridge-config:
+    image: busybox:latest
+    container_name: ntfy-bridge-config
+    environment:
+      - NTFY_ALERTS_TOPIC=${NTFY_ALERTS_TOPIC}
+    volumes:
+      - ./config/ntfy-alertmanager:/in:ro
+      - ntfy-bridge-config:/out
+    command: sh -c 'sed "s|__NTFY_ALERTS_TOPIC__|$${NTFY_ALERTS_TOPIC}|" /in/config.tpl > /out/config'
+    restart: "no"
+
+  ntfy-alertmanager:
+    image: xenrox/ntfy-alertmanager:latest
+    container_name: ntfy-alertmanager
+    network_mode: service:tailscale
+    depends_on:
+      ntfy-bridge-config:
+        condition: service_completed_successfully
+    volumes:
+      - ntfy-bridge-config:/etc/ntfy-alertmanager:ro
+    restart: unless-stopped
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    network_mode: service:tailscale
+    command:
+      - --port=8085
+      - --docker_only=true
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    restart: unless-stopped
+
   tailscale:
     image: tailscale/tailscale:latest
     container_name: monitoring-ts
@@ -59,4 +114,6 @@ services:
 
 volumes:
   monitoring-ts:
+    driver: local
+  ntfy-bridge-config:
     driver: local
