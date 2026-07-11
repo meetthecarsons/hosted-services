@@ -1,8 +1,8 @@
 services:
-  # Tailscale is managed at the host level; do not run another daemon here.
   jellyfin:
     image: linuxserver/jellyfin:latest
     container_name: jellyfin
+    network_mode: service:tailscale  # Share network with Tailscale container for localhost access
     environment:
       - PUID=${PUID:-1000} # user ID (override in .env)
       - PGID=${PGID:-1000} # group ID
@@ -15,6 +15,27 @@ services:
       - /dev/dri:/dev/dri # Pass the Intel GPU device
     group_add:
       - "44" # Add the 'video' group (or the group owning /dev/dri/renderD128)
+    restart: unless-stopped
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: jellyfin-ts
+    hostname: jelly  # Hostname for this node on the tailnet
+    restart: unless-stopped
+    environment:
+      - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
+      - TS_EXTRA_ARGS=--advertise-tags=tag:containers
+      - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
+      - TS_SERVE_CONFIG=/config/serve.json
+    volumes:
+      - jellyfin-ts:/var/lib/tailscale  # Persistent state
+      - /dev/net/tun:/dev/net/tun  # Required for Tailscale
+      - ./ts-serve.json:/config/serve.json:ro
     ports:
       - "${JELLYFIN_PORT}:8096"  # allow direct LAN clients to reach Jellyfin
-    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN  # Required for Tailscale to manage network interfaces
+
+volumes:
+  jellyfin-ts:
+    driver: local

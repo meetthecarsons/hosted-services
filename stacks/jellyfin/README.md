@@ -1,133 +1,19 @@
-Accessing Jellyfin on the tailnet and local LAN
+# Jellyfin
 
-> **Note:** this directory has been moved to `stacks/jellyfin` in the repository layout.
->
-> Historically the stack used Caddy with Let's Encrypt to expose Jellyfin to the
-> public Internet.  In the current deployment we no longer publish it on the
-> WAN; remote clients connect over Tailscale and local clients use an internal
-> reverse proxy.  The old Internet‑exposure instructions remain below for
-> reference but can be ignored unless you intentionally want to re‑enable
-> public access.
+Jellyfin with a Tailscale sidecar (`jellyfin-ts`) for tailnet access.
 
-Overview
-- This folder contains a docker-compose setup for `jellyfin`, optionally
-  with `caddy` as a reverse-proxy when Internet exposure is required.
+## How it's wired
 
-Files
-- `docker-compose.yaml` - services for `jellyfin` (plus `tailscale`).
-- `Caddyfile` - **legacy** reverse-proxy configuration; the active proxy lives
-  in `stacks/reverse-proxy` now.  You can remove this file if you don’t need
-  the old configuration.
- - `docker-compose.yaml` - services for `jellyfin`.
- - `Caddyfile` - **legacy** reverse-proxy configuration; the active proxy lives
-    in `stacks/reverse-proxy` now.  You can remove this file if you don’t need
-    the old configuration.
-
-Quick start (tailnet/local use)
-1. Copy `.env.example` to `.env` and adjust the values to match your host
-   (IDs, timezone, and path locations).
-
-```sh
-cp .env.example .env
-```
-
-2. Bring up the stack from this directory (Compose will automatically load
-   variables from `.env`):
-
-```bash
-docker compose up -d
-```
-
-3. Ensure `tailscaled` is running on the host (see Tailnet access section below);
-   no Tailscale container is required for this stack.
-4. Points clients either at the internal proxy hostnames or directly to
-   `ds-s-01.lan.internal:${JELLYFIN_PORT:-8096}` while they remain on the LAN.
-5. No router port-forwards are required unless you later decide to expose
-   the service publicly.
-
-The legacy "Expose via Caddy/Let's Encrypt" instructions are further down
-for historical curiosity.
-
----
-
-### Tailnet access (optional)
-
-Jellyfin can be reached over your existing host-level Tailscale daemon.  No
-container is required: the proxy (or any other service) can simply listen on
-the host’s Tailscale IP/port and forward to the internal network.
-
-To use this pattern, ensure `tailscaled` is running on the host, then deploy
-and configure the reverse proxy as described in the proxy section below.  The
-proxy may run in host mode or on both the host and the `internal` network so
-it can access the Tailscale interface.
-
-Clients on the tailnet connect to whatever hostname the proxy advertises
-(e.g. `jelly.<your-tailnet>.ts.net`) and traffic will be routed internally to
-Jellyfin.  There is no need to add any Tailscale environment variables to the
-`jellyfin` compose file when using the host daemon.
-
-> If you do run a Tailscale container for some reason, be aware that only one
-> daemon may manage the `tailscale0` interface at a time; multiple containers
-> will conflict.
-
-For general guidance on Tailscale, consult the main repository README.
-
-Clients on the tailnet can then reach the server as `https://jelly.<your-tailnet>.ts.net` without opening public ports.  This works equally well from a laptop, phone, or a Tailscale‑capable TV – once the device is logged into your tailnet the app will talk directly to the server.  See the main repo README for general tailscale guidance.
-
----
-
-### Internal network & reverse proxy
-
-This service now joins the shared `internal` network, which is automatically
-created when you deploy the proxy stack.  The proxy itself owns the network,
-so there is no need for a separate `internal` stack or manual network command.
-Remove the `ports:` mappings above, since all traffic will be routed by
-hostname through the proxy.
-
-To deploy the proxy and network:
-
-```sh
-cd stacks/reverse-proxy
-# brings up Caddy and simultaneously creates the `internal` network
-docker compose up -d
-```
-
-Configure the proxy's `Caddyfile` (or equivalent) with entries for each
-service, e.g. `jelly.svc.internal` → `jellyfin:8096`.  Clients on your LAN can
-use DNS or `/etc/hosts` to resolve `*.svc.internal` to the proxy host.
-
-> **Temporary compatibility:** legacy LAN clients can still hit the
-> server directly on port 8096 because the Jellyfin service exposes that port
-> on the host. You do not need a proxy rule. When everything is on
-> `*.svc.internal` or using Tailscale you can remove the host mapping if you
-> wish.
-With this pattern you can add other stacks (Sonarr, Radarr, etc.) by simply
-attaching them to the `internal` network and adding proxy rules; no port
-mappings are required in their compose files.
-
-Security recommendations (Roku-compatible)
-- Do NOT use HTTP Basic or reverse-proxy SSO for the Jellyfin hostname; Roku devices need plain HTTPS with regular Jellyfin credentials.
-- Create separate non-admin accounts for each user; do not share admin.
-- Enable and enforce strong passwords; Roku users will enter the password on the device.
-- Disable anonymous or guest access.
-- Limit simultaneous streams per account and set conservative remote bitrate default (to protect your upload).
-- Run `fail2ban` on the host to watch Jellyfin logs and ban repeated failed login attempts (see notes below).
-
-Bandwidth guidance
-- Your upstream (~30 Mbps) is enough for ~2 concurrent 1080p direct-play streams (assuming ~6-8 Mbps each).
-- Encourage direct-play by using compatible codecs/containers on client devices to avoid server transcoding.
-- If transcoding is needed, ensure the Jellyfin host has sufficient CPU/GPU for the expected load.
-
-Adding protections (recommended next steps)
-- Consider placing Cloudflare in front of the domain for WAF/rate-limiting (optional). If you later want Cloudflare Tunnel, you can switch from this setup to cloudflared to avoid router port-forwards.
-- Configure `fail2ban` or `crowdsec` to parse Jellyfin logs and ban attackers.
-
-If you want, I can:
-- Add a `fail2ban` container or host config example monitoring Jellyfin logs.
-- Add bandwidth/stream limit configuration for Jellyfin and sample user creation scripts.
-- Prepare a Cloudflare Tunnel variant to avoid router changes (requires a Cloudflare account and domain).
-
-Non-standard host ports (optional)
-- If you prefer exposing Caddy on non-standard host ports (for example host `8095` for HTTP and `8096` for HTTPS) the compose in this folder maps `8095:80` and `8096:443`.
-- Important: Let's Encrypt ACME usually requires public ports `80` and `443` to reach your server for HTTP-01 or TLS-ALPN-01 challenges. If you put Caddy on non-standard host ports you must configure your router to forward public port `80` -> host `8095` and public port `443` -> host `8096` so Let's Encrypt can complete validation.
-- Alternative: use a DNS challenge (Cloudflare, Route53, etc.) to obtain certs without exposing `80`/`443`, or use Cloudflare Tunnel to avoid port-forwards entirely.
+- The `jellyfin` container runs with `network_mode: service:tailscale`, so it
+  shares the sidecar's network namespace. Because of that, the
+  `${JELLYFIN_PORT}:8096` LAN port mapping lives on the `tailscale` service,
+  not on `jellyfin`.
+- `ts-serve.json` is mounted into the sidecar as its `TS_SERVE_CONFIG`:
+  Tailscale serve terminates HTTPS on 443 and proxies to
+  `localhost:8096`. Tailnet clients use `https://jelly.<tailnet>.ts.net`;
+  LAN clients can still hit the host directly on `${JELLYFIN_PORT}`.
+- `TS_AUTH_KEY` (in `.env` / `.env.sops`) is only needed for the first
+  login — node state persists in the `jellyfin-ts` volume. The node is
+  tagged `tag:containers`.
+- Intel QuickSync hardware transcoding: `/dev/dri` is passed through and the
+  container joins group `44` (`video`).
