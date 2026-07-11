@@ -11,7 +11,7 @@ tardis (ds-s-01, 192.168.60.80 / tailnet "tardis")
   - arrgh-proton      # gluetun VPN + qbittorrent + *arr download suite
   - glance            # dashboard (tailnet "glance")
   - immich            # photos (tailnet "photos")
-  - jellyfin          # media server
+  - jellyfin          # media server (tailnet "jelly")
   - monitoring        # prometheus + grafana + node_exporter (tailnet "graf")
   - vaultwarden       # password manager (tailnet "vault")
 
