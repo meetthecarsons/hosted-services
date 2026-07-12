@@ -6,7 +6,8 @@ creation_rules:
       'age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7'
     ]
     # encrypt sensitive variable values (keep non-secret keys readable in diffs)
-    encrypted_regex: '(KEY|TOKEN|PASSWORD|SECRET)'
+    # TOPIC: ntfy topic names are the access control on free ntfy.sh — secret
+    encrypted_regex: '(KEY|TOKEN|PASSWORD|SECRET|TOPIC)'
 
   # broad rule for any YAML files (keep after specific rules)
   - path_regex: '.*\.ya?ml$'

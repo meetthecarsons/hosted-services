@@ -58,14 +58,30 @@ groups:
 
   - name: containers
     rules:
-      # cAdvisor only reports containers it can see; a container that
-      # disappears stops updating container_last_seen. Deliberately removed
-      # containers alert once and age out of the 24h bridge cache.
+      # A vanished container's series goes stale within one scrape, so
+      # "last_seen is old" never evaluates true — instead compare what
+      # cAdvisor reported an hour ago against what it reports now. A
+      # deliberately removed container alerts, then self-resolves once the
+      # hour window passes. Suppressed while cAdvisor itself is unscrapeable
+      # (that case is CadvisorDown's job).
       - alert: ContainerGone
         expr: >-
-          time() - container_last_seen{name!=""} > 300
+          count by (name) (container_last_seen{name!=""} offset 1h)
+            unless count by (name) (container_last_seen{name!=""})
+            unless on () (up{job="cadvisor"} == 0)
         for: 5m
         labels:
           severity: warning
         annotations:
-          summary: "container {{ $labels.name }} not seen for 5+ minutes"
+          summary: "container {{ $labels.name }} has disappeared"
+          description: >-
+            Reporting to cAdvisor an hour ago, gone for 5+ minutes now.
+            Resolves on its own if the removal was deliberate.
+
+      - alert: CadvisorDown
+        expr: up{job="cadvisor"} == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "cAdvisor is down — container alerting is blind"

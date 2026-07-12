@@ -1,0 +1,76 @@
+# promtool unit tests for rules/alerts.yml — run from config/prometheus/:
+#   promtool test rules tests/alerts_test.yml
+# Lives outside rules/ so the deployed Prometheus never loads it as rules.
+rule_files:
+  - ../rules/alerts.yml
+
+evaluation_interval: 15s
+
+tests:
+  # A container reports for an hour, then vanishes (cAdvisor stays up):
+  # ContainerGone fires after the 5m hold, and self-resolves once the
+  # 1h offset window slides past the removal.
+  - interval: 15s
+    input_series:
+      - series: 'container_last_seen{name="canary", job="cadvisor"}'
+        values: '1x240'
+      - series: 'up{job="cadvisor", instance="localhost:8085"}'
+        values: '1x560'
+    alert_rule_test:
+      - eval_time: 70m
+        alertname: ContainerGone
+        exp_alerts:
+          - exp_labels:
+              name: canary
+              severity: warning
+            exp_annotations:
+              summary: "container canary has disappeared"
+              description: >-
+                Reporting to cAdvisor an hour ago, gone for 5+ minutes now.
+                Resolves on its own if the removal was deliberate.
+      - eval_time: 130m
+        alertname: ContainerGone
+        exp_alerts: []
+
+  # cAdvisor itself goes unscrapeable: every container series vanishes at
+  # once, but ContainerGone stays quiet (suppressed) and CadvisorDown
+  # carries the signal instead.
+  - interval: 15s
+    input_series:
+      - series: 'container_last_seen{name="canary", job="cadvisor"}'
+        values: '1x240'
+      - series: 'up{job="cadvisor", instance="localhost:8085"}'
+        values: '1x240 0x240'
+    alert_rule_test:
+      - eval_time: 70m
+        alertname: ContainerGone
+        exp_alerts: []
+      - eval_time: 75m
+        alertname: CadvisorDown
+        exp_alerts:
+          - exp_labels:
+              job: cadvisor
+              instance: localhost:8085
+              severity: warning
+            exp_annotations:
+              summary: "cAdvisor is down — container alerting is blind"
+
+  # A node_exporter target going dark for 4+ minutes fires HostDown.
+  - interval: 15s
+    input_series:
+      - series: 'up{job="node", instance="galileo.eland-wyrm.ts.net:9100"}'
+        values: '1x40 0x40'
+    alert_rule_test:
+      - eval_time: 15m
+        alertname: HostDown
+        exp_alerts:
+          - exp_labels:
+              job: node
+              instance: galileo.eland-wyrm.ts.net:9100
+              severity: critical
+            exp_annotations:
+              summary: "galileo.eland-wyrm.ts.net:9100 is down"
+              description: >-
+                node_exporter target unreachable for 4+ minutes. For galileo
+                this usually means a power event at the site — watch the info
+                topic for its boot message.
