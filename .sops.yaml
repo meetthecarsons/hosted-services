@@ -1,10 +1,23 @@
+keys:
+  # deprecated-vaultwarden — kept as a recipient until the new keys below are
+  # confirmed working end-to-end; remove once that's verified.
+  - &deprecated_vaultwarden age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n
+  - &host_tardis age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7
+  # Robert's personal admin key, derived from ~/.ssh/id_ed25519 (same key
+  # used in nixos-configs/.sops.yaml)
+  - &admin_robert age1du6qgru89dz5ykcqlw97vear78ya8e5yu65ja80dlu52kdhn44msk6r58k
+  # crafty's host identity, derived from its /etc/ssh/ssh_host_ed25519_key.pub
+  # (same key used in nixos-configs/.sops.yaml)
+  - &host_crafty age1p0gay307txtfzln3mf0d9rrklpch2fjragc2650wgcfjcqtmj3jszypj4s
+
 creation_rules:
   - path_regex: 'stacks/.*/.env(.sops)?$'
     input_type: dotenv
-    age: [
-      'age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n',
-      'age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7'
-    ]
+    age:
+      - *deprecated_vaultwarden
+      - *host_tardis
+      - *admin_robert
+      - *host_crafty
     # encrypt sensitive variable values (keep non-secret keys readable in diffs)
     # TOPIC: ntfy topic names are the access control on free ntfy.sh — secret
     encrypted_regex: '(KEY|TOKEN|PASSWORD|SECRET|TOPIC)'
@@ -12,8 +25,9 @@ creation_rules:
   # broad rule for any YAML files (keep after specific rules)
   - path_regex: '.*\.ya?ml$'
     input_type: yaml
-    age: [
-      'age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n',
-      'age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7'
-    ]
+    age:
+      - *deprecated_vaultwarden
+      - *host_tardis
+      - *admin_robert
+      - *host_crafty
     encrypted_regex: '^(password|secret|api_key|token|private_key)$'

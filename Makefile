@@ -1,5 +1,7 @@
 .PHONY: help up down pull logs deploy deploy-diff
 
+SHELL := /bin/bash
+
 help:
 	@echo "Usage: make <target> [VARIABLE=...]"
 	@echo ""
