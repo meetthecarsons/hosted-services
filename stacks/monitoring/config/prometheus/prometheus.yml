@@ -21,3 +21,8 @@ scrape_configs:
   - job_name: cadvisor
     static_configs:
       - targets: ['localhost:8085']
+
+  - job_name: frigate
+    metrics_path: /api/metrics
+    static_configs:
+      - targets: ['galileo.eland-wyrm.ts.net:5000']
