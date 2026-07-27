@@ -1,4 +1,19 @@
 services:
+  # Renders arm.yaml from the template, substituting secrets/host identity
+  # from the env. Runs once per `up`; arm waits for it.
+  arm-config:
+    image: busybox:latest
+    container_name: arm-config
+    environment:
+      - ARM_NAME=${ARM_NAME}
+      - MAKEMKV_PERMA_KEY=${MAKEMKV_PERMA_KEY}
+      - OMDB_API_KEY=${OMDB_API_KEY}
+    volumes:
+      - ./config:/in:ro
+      - arm-config:/out
+    command: sh -c 'sed "s|__ARM_NAME__|$${ARM_NAME}|; s|__MAKEMKV_PERMA_KEY__|$${MAKEMKV_PERMA_KEY}|; s|__OMDB_API_KEY__|$${OMDB_API_KEY}|" /in/arm.yaml.tpl > /out/arm.yaml'
+    restart: "no"
+
   arm:
     image: automaticrippingmachine/automatic-ripping-machine:latest
     pull_policy: always
@@ -9,6 +24,9 @@ services:
     # disc-insert events, and makes explicit per-drive `devices:` entries
     # unnecessary
     privileged: true
+    depends_on:
+      arm-config:
+        condition: service_completed_successfully
     environment:
       ARM_UID: ${ARM_UID}
       ARM_GID: ${ARM_GID}
@@ -18,6 +36,10 @@ services:
       - ${ARM_MUSIC}:/home/arm/music
       - ${ARM_LOGS}:/home/arm/logs
       - ${ARM_MEDIA}:/home/arm/media
-      - ./config:/etc/arm/config
+      - arm-config:/etc/arm/config
     ports:
       - "${ARM_PORT}:8080"
+
+volumes:
+  arm-config:
+    driver: local
