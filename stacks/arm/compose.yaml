@@ -1,6 +1,6 @@
 services:
-  # Renders arm.yaml from the template, substituting secrets/host identity
-  # from the env. Runs once per `up`; arm waits for it.
+  # Renders arm.yaml and apprise.yaml from their templates, substituting
+  # secrets/host identity from the env. Runs once per `up`; arm waits for it.
   arm-config:
     image: busybox:latest
     container_name: arm-config
@@ -8,10 +8,16 @@ services:
       - ARM_NAME=${ARM_NAME}
       - MAKEMKV_PERMA_KEY=${MAKEMKV_PERMA_KEY}
       - OMDB_API_KEY=${OMDB_API_KEY}
+      - NTFY_TOPIC=${NTFY_TOPIC}
     volumes:
       - ./config:/in:ro
       - arm-config:/out
-    command: sh -c 'sed "s|__ARM_NAME__|$${ARM_NAME}|; s|__MAKEMKV_PERMA_KEY__|$${MAKEMKV_PERMA_KEY}|; s|__OMDB_API_KEY__|$${OMDB_API_KEY}|" /in/arm.yaml.tpl > /out/arm.yaml'
+    command: >
+      sh -c '
+      for f in arm.yaml apprise.yaml; do
+        sed "s|__ARM_NAME__|$${ARM_NAME}|; s|__MAKEMKV_PERMA_KEY__|$${MAKEMKV_PERMA_KEY}|; s|__OMDB_API_KEY__|$${OMDB_API_KEY}|; s|__NTFY_TOPIC__|$${NTFY_TOPIC}|" /in/$$f.tpl > /out/$$f;
+      done
+      '
     restart: "no"
 
   arm:

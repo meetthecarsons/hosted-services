@@ -371,4 +371,4 @@ JSON_URL: ""
 
 # File location of your apprise.yaml file
 # Leave blank to disable
-APPRISE: ""
+APPRISE: "/etc/arm/config/apprise.yaml"
