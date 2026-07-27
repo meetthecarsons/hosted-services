@@ -9,6 +9,8 @@ services:
       - MAKEMKV_PERMA_KEY=${MAKEMKV_PERMA_KEY}
       - OMDB_API_KEY=${OMDB_API_KEY}
       - NTFY_TOPIC=${NTFY_TOPIC}
+      - ARM_UID=${ARM_UID}
+      - ARM_GID=${ARM_GID}
     volumes:
       - ./config:/in:ro
       - arm-config:/out
@@ -16,7 +18,8 @@ services:
       sh -c '
       for f in arm.yaml apprise.yaml; do
         sed "s|__ARM_NAME__|$${ARM_NAME}|; s|__MAKEMKV_PERMA_KEY__|$${MAKEMKV_PERMA_KEY}|; s|__OMDB_API_KEY__|$${OMDB_API_KEY}|; s|__NTFY_TOPIC__|$${NTFY_TOPIC}|" /in/$$f.tpl > /out/$$f;
-      done
+      done;
+      chown -R $${ARM_UID}:$${ARM_GID} /out
       '
     restart: "no"
 
