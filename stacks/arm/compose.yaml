@@ -1,0 +1,22 @@
+services:
+  arm:
+    image: automaticrippingmachine/automatic-ripping-machine:latest
+    pull_policy: always
+    container_name: arm
+    restart: unless-stopped
+    privileged: true # required for ARM's internal udev daemon to see disc-insert events
+    environment:
+      ARM_UID: ${ARM_UID}
+      ARM_GID: ${ARM_GID}
+      TZ: ${TZ}
+    devices:
+      - ${ARM_DEVICE_SR}:${ARM_DEVICE_SR} # optical drive block device
+      - ${ARM_DEVICE_SG}:${ARM_DEVICE_SG} # matching generic SCSI device — MakeMKV needs both
+    volumes:
+      - ${ARM_HOME}:/home/arm
+      - ${ARM_MUSIC}:/home/arm/music
+      - ${ARM_LOGS}:/home/arm/logs
+      - ${ARM_MEDIA}:/home/arm/media
+      - ./config:/etc/arm/config
+    ports:
+      - "${ARM_PORT}:8080"

@@ -26,6 +26,7 @@ Not deployed anywhere right now (repo definitions only):
   - nextcloud
   - minecraft-bedrock
   - internal / random / reverse-proxy
+  - arm               # disc ripper; host-agnostic, .env picks the drive/host — targeting crafty first
 ```
 
 Decommissioned: delamain (its stacks moved to tardis or were retired).
