@@ -19,6 +19,7 @@ services:
       for f in arm.yaml apprise.yaml; do
         sed "s|__ARM_NAME__|$${ARM_NAME}|; s|__MAKEMKV_PERMA_KEY__|$${MAKEMKV_PERMA_KEY}|; s|__OMDB_API_KEY__|$${OMDB_API_KEY}|; s|__NTFY_TOPIC__|$${NTFY_TOPIC}|" /in/$$f.tpl > /out/$$f;
       done;
+      cp /in/abcde.conf /out/abcde.conf;
       chown -R $${ARM_UID}:$${ARM_GID} /out
       '
     restart: "no"
