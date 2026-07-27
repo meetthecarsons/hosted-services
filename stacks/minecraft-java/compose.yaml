@@ -1,0 +1,24 @@
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      EULA: "TRUE"
+      TYPE: "VANILLA"
+      VERSION: ${VERSION}
+      DIFFICULTY: ${DIFFICULTY}
+      MODE: ${MODE}
+      MAX_PLAYERS: ${MAX_PLAYERS}
+      OPS: ${OPS}
+      INIT_MEMORY: ${INIT_MEMORY}
+      MAX_MEMORY: ${MAX_MEMORY}
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: ${RCON_PASSWORD}
+    ports:
+      - "25565:25565"
+      - "25575:25575"
+    volumes:
+      - ${DATA_DIR}:/data
+    stdin_open: true
+    tty: true

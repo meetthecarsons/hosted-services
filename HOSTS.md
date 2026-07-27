@@ -16,7 +16,7 @@ tardis (ds-s-01, 192.168.60.80 / tailnet "tardis")
   - vaultwarden       # password manager (tailnet "vault")
 
 crafty (192.168.60.81 / tailnet "crafty")
-  - minecraft-bedrock # unverified — confirm and update
+  - minecraft-java    # vanilla Java server, RCON enabled
 ```
 
 Not deployed anywhere right now (repo definitions only):
@@ -24,6 +24,7 @@ Not deployed anywhere right now (repo definitions only):
 ```
   - mealie            # stale deployed copy in /opt/stacks/mealie, not running
   - nextcloud
+  - minecraft-bedrock
   - internal / random / reverse-proxy
 ```
 
