@@ -7,8 +7,9 @@ keys:
   # used in nixos-configs/.sops.yaml)
   - &admin_robert age1du6qgru89dz5ykcqlw97vear78ya8e5yu65ja80dlu52kdhn44msk6r58k
   # crafty's host identity, derived from its /etc/ssh/ssh_host_ed25519_key.pub
-  # (same key used in nixos-configs/.sops.yaml)
-  - &host_crafty age1p0gay307txtfzln3mf0d9rrklpch2fjragc2650wgcfjcqtmj3jszypj4s
+  # (regenerated 2026-07-26 after crafty's NixOS->Ubuntu reimage gave it a
+  # new host key; no longer the same key as nixos-configs/.sops.yaml)
+  - &host_crafty age1awn52s00phd36c044m52wxxgsw4vndtmpn8ft5vprnagz70gnqqq28w9jn
 
 creation_rules:
   - path_regex: 'stacks/.*/.env(.sops)?$'
