@@ -1,8 +1,9 @@
 # ARM (Automatic Ripping Machine) config file TEMPLATE. The arm-config
 # service renders it at `up`, substituting __ARM_NAME__, __MAKEMKV_PERMA_KEY__,
-# and __OMDB_API_KEY__ from the stack env (.env <- .env.sops). These are
-# secrets (or host identity) — never hardcode a value here. Everything else
-# below is ARM's own upstream default (setup/arm.yaml in the ARM repo).
+# __OMDB_API_KEY__, and __TMDB_API_KEY__ from the stack env (.env <- .env.sops).
+# These are secrets (or host identity) — never hardcode a value here.
+# Everything else below is ARM's own upstream default (setup/arm.yaml in the
+# ARM repo).
 
 #################
 ## ARM Options ##
@@ -102,7 +103,7 @@ DATA_RIP_PARAMETERS: ""
 #    OMDB for movies and shows
 #    TMDB for movies only
 # You will still need to provide an api key for the provider you have selected
-METADATA_PROVIDER: "omdb"
+METADATA_PROVIDER: "tmdb"
 
 # Set to one of "none", "musicbrainz", "freecddb"
 # if "musicbrainz" is used the disc information are asked from musicbrainz.org
@@ -358,7 +359,7 @@ OMDB_API_KEY: "__OMDB_API_KEY__"
 # See README-OMDBAPI for background and info
 # This is the API key for https://www.themoviedb.org/ queries.
 # More info at https://www.themoviedb.org/documentation/api
-TMDB_API_KEY: ""
+TMDB_API_KEY: "__TMDB_API_KEY__"
 
 # JSON_URL
 # Url to send Notifications to in JSON format

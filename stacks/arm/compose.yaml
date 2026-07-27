@@ -8,6 +8,7 @@ services:
       - ARM_NAME=${ARM_NAME}
       - MAKEMKV_PERMA_KEY=${MAKEMKV_PERMA_KEY}
       - OMDB_API_KEY=${OMDB_API_KEY}
+      - TMDB_API_KEY=${TMDB_API_KEY}
       - NTFY_TOPIC=${NTFY_TOPIC}
       - ARM_UID=${ARM_UID}
       - ARM_GID=${ARM_GID}
@@ -17,7 +18,7 @@ services:
     command: >
       sh -c '
       for f in arm.yaml apprise.yaml; do
-        sed "s|__ARM_NAME__|$${ARM_NAME}|; s|__MAKEMKV_PERMA_KEY__|$${MAKEMKV_PERMA_KEY}|; s|__OMDB_API_KEY__|$${OMDB_API_KEY}|; s|__NTFY_TOPIC__|$${NTFY_TOPIC}|" /in/$$f.tpl > /out/$$f;
+        sed "s|__ARM_NAME__|$${ARM_NAME}|; s|__MAKEMKV_PERMA_KEY__|$${MAKEMKV_PERMA_KEY}|; s|__OMDB_API_KEY__|$${OMDB_API_KEY}|; s|__TMDB_API_KEY__|$${TMDB_API_KEY}|; s|__NTFY_TOPIC__|$${NTFY_TOPIC}|" /in/$$f.tpl > /out/$$f;
       done;
       cp /in/abcde.conf /out/abcde.conf;
       chown -R $${ARM_UID}:$${ARM_GID} /out
