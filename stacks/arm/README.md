@@ -2,18 +2,20 @@
 
 [automatic-ripping-machine](https://github.com/automatic-ripping-machine/automatic-ripping-machine),
 deployed independently per host that has an optical drive attached
-(currently: crafty, DVD only). The stack is host-agnostic — every
-host-specific value (drive device nodes, media output path) lives in
-`.env`, not in `compose.yaml`. See `planning/disc-ripping-machine.md` in the
-outer repo for the full design.
+(currently: crafty, DVD only). The stack is host-agnostic — the
+host-specific value that varies (media output path) lives in `.env`, not
+in `compose.yaml`. See `planning/disc-ripping-machine.md` in the outer repo
+for the full design.
 
 ## How it's wired
 
-- `privileged: true` plus `ARM_DEVICE_SR`/`ARM_DEVICE_SG` passthrough (both
-  required — MakeMKV needs the generic SCSI device alongside the block
-  device; check the right nodes for this host with `lsscsi -g`). The
-  container runs its own udev daemon internally and detects disc insertion
-  on its own; no host-side udev rules are needed.
+- `privileged: true` grants the container every host device (there's no
+  glob/wildcard syntax for Docker's `devices:` list, so this is simpler
+  than enumerating this host's `/dev/sr*`+`/dev/sg*` pair — MakeMKV needs
+  both the block device and its matching generic SCSI device). Also
+  required anyway for ARM's internal udev daemon to see disc-insert
+  events; the container detects insertion on its own, no host-side udev
+  rules needed.
 - `ARM_UID`/`ARM_GID` are set to `2000`/`2000` (the `apps` service user),
   ARM's own documented env vars for this — not the linuxserver.io-style
   `PUID`/`PGID`, which this image doesn't use.

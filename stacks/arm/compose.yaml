@@ -4,14 +4,15 @@ services:
     pull_policy: always
     container_name: arm
     restart: unless-stopped
-    privileged: true # required for ARM's internal udev daemon to see disc-insert events
+    # grants access to every host device (incl. whichever /dev/sr*+/dev/sg*
+    # this host has) — required anyway for ARM's internal udev daemon to see
+    # disc-insert events, and makes explicit per-drive `devices:` entries
+    # unnecessary
+    privileged: true
     environment:
       ARM_UID: ${ARM_UID}
       ARM_GID: ${ARM_GID}
       TZ: ${TZ}
-    devices:
-      - ${ARM_DEVICE_SR}:${ARM_DEVICE_SR} # optical drive block device
-      - ${ARM_DEVICE_SG}:${ARM_DEVICE_SG} # matching generic SCSI device — MakeMKV needs both
     volumes:
       - ${ARM_HOME}:/home/arm
       - ${ARM_MUSIC}:/home/arm/music
