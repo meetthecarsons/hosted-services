@@ -26,8 +26,14 @@ services:
     restart: "no"
 
   arm:
-    image: automaticrippingmachine/automatic-ripping-machine:latest
-    pull_policy: always
+    # locally-built custom image (repos/automatic-ripping-machine +
+    # repos/arm-dependencies in the outer homelab repo, homelab-patches
+    # branch): fixes the TMDB metadata_selector bug and adds Intel QSV
+    # support. Built directly on crafty (docker build -t arm:homelab),
+    # no registry involved - pull_policy: never so compose doesn't try to
+    # pull a nonexistent remote image.
+    image: arm:homelab
+    pull_policy: never
     container_name: arm
     restart: unless-stopped
     # grants access to every host device (incl. whichever /dev/sr*+/dev/sg*
