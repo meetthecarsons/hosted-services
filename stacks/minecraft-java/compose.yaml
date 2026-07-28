@@ -11,6 +11,7 @@ services:
       MODE: ${MODE}
       MAX_PLAYERS: ${MAX_PLAYERS}
       OPS: ${OPS}
+      WHITELIST: ${WHITELIST}
       INIT_MEMORY: ${INIT_MEMORY}
       MAX_MEMORY: ${MAX_MEMORY}
       ENABLE_RCON: "true"
