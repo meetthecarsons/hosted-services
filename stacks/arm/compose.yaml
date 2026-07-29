@@ -6,6 +6,7 @@ services:
     container_name: arm-config
     environment:
       - ARM_NAME=${ARM_NAME}
+      - ARM_BASE_URL=${ARM_BASE_URL}
       - MAKEMKV_PERMA_KEY=${MAKEMKV_PERMA_KEY}
       - OMDB_API_KEY=${OMDB_API_KEY}
       - TMDB_API_KEY=${TMDB_API_KEY}
@@ -18,9 +19,10 @@ services:
     command: >
       sh -c '
       for f in arm.yaml apprise.yaml; do
-        sed "s|__ARM_NAME__|$${ARM_NAME}|; s|__MAKEMKV_PERMA_KEY__|$${MAKEMKV_PERMA_KEY}|; s|__OMDB_API_KEY__|$${OMDB_API_KEY}|; s|__TMDB_API_KEY__|$${TMDB_API_KEY}|; s|__NTFY_TOPIC__|$${NTFY_TOPIC}|" /in/$$f.tpl > /out/$$f;
+        sed "s|__ARM_NAME__|$${ARM_NAME}|; s|__ARM_BASE_URL__|$${ARM_BASE_URL}|; s|__MAKEMKV_PERMA_KEY__|$${MAKEMKV_PERMA_KEY}|; s|__OMDB_API_KEY__|$${OMDB_API_KEY}|; s|__TMDB_API_KEY__|$${TMDB_API_KEY}|; s|__NTFY_TOPIC__|$${NTFY_TOPIC}|" /in/$$f.tpl > /out/$$f;
       done;
       cp /in/abcde.conf /out/abcde.conf;
+      cp /in/qsv_presets.json /out/qsv_presets.json;
       chown -R $${ARM_UID}:$${ARM_GID} /out
       '
     restart: "no"

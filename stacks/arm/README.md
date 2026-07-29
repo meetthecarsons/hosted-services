@@ -21,8 +21,8 @@ for the full design.
   `PUID`/`PGID`, which this image doesn't use.
 - `arm.yaml` and `apprise.yaml` are both rendered at `up` by the
   `arm-config` service (same pattern as `monitoring`'s
-  `ntfy-bridge-config`): it substitutes `ARM_NAME`, `MAKEMKV_PERMA_KEY`,
-  `OMDB_API_KEY`, and `NTFY_TOPIC` from `.env` into
+  `ntfy-bridge-config`): it substitutes `ARM_NAME`, `ARM_BASE_URL`,
+  `MAKEMKV_PERMA_KEY`, `OMDB_API_KEY`, and `NTFY_TOPIC` from `.env` into
   `config/{arm,apprise}.yaml.tpl` and writes the results to a named volume,
   which `arm` mounts at `/etc/arm/config`. This means the config-as-code
   templates are the source of truth — any edits made through ARM's web UI

@@ -1,6 +1,7 @@
 # ARM (Automatic Ripping Machine) config file TEMPLATE. The arm-config
-# service renders it at `up`, substituting __ARM_NAME__, __MAKEMKV_PERMA_KEY__,
-# __OMDB_API_KEY__, and __TMDB_API_KEY__ from the stack env (.env <- .env.sops).
+# service renders it at `up`, substituting __ARM_NAME__, __ARM_BASE_URL__,
+# __MAKEMKV_PERMA_KEY__, __OMDB_API_KEY__, and __TMDB_API_KEY__ from the
+# stack env (.env <- .env.sops).
 # These are secrets (or host identity) — never hardcode a value here.
 # Everything else below is ARM's own upstream default (setup/arm.yaml in the
 # ARM repo).
@@ -179,7 +180,7 @@ WEBSERVER_PORT: 8080
 
 # Base URL to use for notifications and display purposes
 # Be sure to include protocol and port if needed (e.g. http://example.com:8091 or https://example.com)
-UI_BASE_URL: ""
+UI_BASE_URL: "__ARM_BASE_URL__"
 
 ########################
 ##  File Permissions  ##
@@ -231,12 +232,19 @@ DELRAWFILES: true
 ##########################
 
 # Handbrake preset profile for DVDs
-# Execute "HandBrakeCLI -z" to see a list of all presets
-HB_PRESET_DVD: "HQ 720p30 Surround"
+# Execute "HandBrakeCLI -z" to see a list of all built-in presets. These two
+# are custom homelab presets (not built-in) - see qsv_presets.json and
+# HB_ARGS_DVD/HB_ARGS_BD's --preset-import-file below. QSV hardware
+# encoding needs the Intel GPU apt packages from arm-dependencies'
+# Dockerfile (jammy's stock libva/oneVPL packages are too old for this
+# host's iGPU).
+HB_PRESET_DVD: "H.265 QSV 1080p Surround"
 
-# Handbrake preset profile for Blurays
-# Execute "HandBrakeCLI -z" to see a list of all presets
-HB_PRESET_BD: "HQ 1080p30 Surround"
+# Handbrake preset profile for Blurays. One preset slot covers both regular
+# and UHD Blu-ray (ARM has no separate UHD config) - 2160p is a cap, not a
+# forced upscale, so 1080p BD sources aren't blown up to 4K.
+# Execute "HandBrakeCLI -z" to see a list of all built-in presets.
+HB_PRESET_BD: "H.265 QSV 2160p 4K Surround"
 
 # Extension of the final video file
 DEST_EXT: mkv
@@ -255,10 +263,21 @@ HANDBRAKE_LOCAL: HandBrakeCLI
 MAINFEATURE: false
 
 # Additional HandBrake arguments for DVDs.
-HB_ARGS_DVD: "--subtitle scan -F"
+# --preset-import-file makes the custom QSV+Surround presets above
+# resolvable by name (they aren't in HandBrake's own built-in preset list).
+HB_ARGS_DVD: "--subtitle scan -F --preset-import-file /etc/arm/config/qsv_presets.json"
 
 # Additional Handbrake arguments for Bluray Discs.
-HB_ARGS_BD: "--subtitle scan -F --subtitle-burned --audio-lang-list eng --all-audio"
+# --first-audio, not --all-audio: confirmed by direct HandBrakeCLI testing
+# that any explicit multi-track audio selection (--all-audio, or a bare
+# `-a <n>`) makes HandBrake silently ignore the preset's AudioList and
+# encode every track as MP3 instead of AAC+AC3 passthrough - reproduces
+# even with an unmodified stock preset, so it's a HandBrakeCLI quirk in
+# this version, unrelated to the custom presets above. --first-audio
+# (select the first eng-language track, still preset-driven) doesn't
+# trigger it and produces the intended AAC+AC3 output; the cost is any
+# extra eng-language tracks (e.g. a commentary track) are dropped.
+HB_ARGS_BD: "--subtitle scan -F --subtitle-burned --audio-lang-list eng --first-audio --preset-import-file /etc/arm/config/qsv_presets.json"
 
 
 ##########################
