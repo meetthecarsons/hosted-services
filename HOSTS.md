@@ -13,6 +13,7 @@ tardis (ds-s-01, 192.168.60.80 / tailnet "tardis")
   - immich            # photos (tailnet "photos")
   - jellyfin          # media server (tailnet "jelly")
   - monitoring        # prometheus + grafana + alertmanager + ntfy bridge + cadvisor + node_exporter (tailnet "graf")
+  - syncthing         # phone-to-tardis file sync (audiobook downloads, SMS/MMS backup); no sidecar, bound to tardis's own tailnet address
   - vaultwarden       # password manager (tailnet "vault")
 
 crafty (192.168.60.81 / tailnet "crafty")

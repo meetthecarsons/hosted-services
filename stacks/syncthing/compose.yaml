@@ -1,0 +1,24 @@
+services:
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    restart: unless-stopped
+    hostname: tardis-syncthing
+    environment:
+      - PUID=${PUID:-2000}
+      - PGID=${PGID:-2000}
+    volumes:
+      - ${SYNCTHING_CONFIG}:/var/syncthing/config
+      - ${SYNCTHING_AUDIOBOOKS_DIR}:/var/syncthing/audiobooks
+      - ${SYNCTHING_SMS_DIR}:/var/syncthing/sms-backup
+    # Bound to tardis's own Tailscale address only, not 0.0.0.0 — sync
+    # stays on the tailnet, never exposed on the LAN or public internet
+    # (see planning/investigate-syncthing.md's transport decision). No
+    # tailscale sidecar needed here, unlike other stacks: the phone is the
+    # other sync endpoint, and tardis already has host-level tailnet
+    # membership to bind against.
+    ports:
+      - "${TS_ADDR}:8384:8384" # web GUI
+      - "${TS_ADDR}:22000:22000/tcp" # sync protocol (TCP)
+      - "${TS_ADDR}:22000:22000/udp" # sync protocol (QUIC)
+      - "${TS_ADDR}:21027:21027/udp" # local discovery
