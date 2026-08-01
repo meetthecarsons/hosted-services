@@ -1,0 +1,37 @@
+services:
+  palworld:
+    image: thijsvanloef/palworld-server-docker:latest
+    pull_policy: always
+    restart: unless-stopped
+    stop_grace_period: 30s
+    mem_limit: ${MEM_LIMIT}
+    environment:
+      PUID: "2000"
+      PGID: "2000"
+      TZ: ${TZ}
+      PORT: "8211"
+      QUERY_PORT: "27015"
+      PLAYERS: ${PLAYERS}
+      SERVER_NAME: ${SERVER_NAME}
+      SERVER_DESCRIPTION: ${SERVER_DESCRIPTION}
+      SERVER_PASSWORD: ${SERVER_PASSWORD}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      COMMUNITY: "false"
+      RCON_ENABLED: "true"
+      RCON_PORT: ${RCON_PORT}
+      REST_API_ENABLED: "true"
+      REST_API_PORT: "8212"
+      BACKUP_ENABLED: "true"
+      BACKUP_CRON_EXPRESSION: "0 0 * * *"
+      DELETE_OLD_BACKUPS: "true"
+      OLD_BACKUP_DAYS: "14"
+      AUTO_REBOOT_ENABLED: "true"
+      AUTO_REBOOT_CRON_EXPRESSION: "0 4 * * *"
+      AUTO_REBOOT_WARN_MINUTES: "5"
+    ports:
+      - "8211:8211/udp"
+      - "27015:27015/udp"
+      - "${RCON_PORT}:${RCON_PORT}/tcp"
+      - "8212:8212/tcp"
+    volumes:
+      - ${DATA_DIR}:/palworld
