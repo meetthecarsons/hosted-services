@@ -2,21 +2,34 @@ services:
   # Ensures MakeMKV's own settings.conf has our output-filename template set
   # (<disc label>-<track>.mkv instead of MakeMKV's raw C1_t00.mkv fallback),
   # without clobbering the rest of the file - notably app_Key, which MakeMKV
-  # itself writes there at runtime. Upserts one line; runs once per `up`.
+  # itself writes there at runtime. Also copies the hook scripts into
+  # /config/hooks rather than bind-mounting ./hooks there directly - jlesage's
+  # entrypoint chowns everything under /config to MAKEMKV_UID/GID on startup,
+  # which (via a direct bind mount) reaches through to the host and leaves
+  # the git-managed ./hooks files un-rsync-able by the deploying user on the
+  # next `make deploy`. Copying instead of mounting keeps ./hooks untouched.
+  # Runs once per `up`.
   makemkv-config:
     image: busybox:latest
     container_name: makemkv-config
+    environment:
+      - MAKEMKV_UID=${MAKEMKV_UID}
+      - MAKEMKV_GID=${MAKEMKV_GID}
     volumes:
       - ${MAKEMKV_CONFIG}:/config
+      - ./hooks:/hooks-src:ro
     command: >
       sh -c '
-      mkdir -p /config/.MakeMKV;
+      mkdir -p /config/.MakeMKV /config/hooks;
       touch /config/.MakeMKV/settings.conf;
       if grep -q "^app_DefaultOutputFileName" /config/.MakeMKV/settings.conf; then
         sed -i "s|^app_DefaultOutputFileName.*|app_DefaultOutputFileName = \"{NAME1}-{AM2}\"|" /config/.MakeMKV/settings.conf;
       else
         echo "app_DefaultOutputFileName = \"{NAME1}-{AM2}\"" >> /config/.MakeMKV/settings.conf;
-      fi
+      fi;
+      cp /hooks-src/*.sh /config/hooks/;
+      chmod +x /config/hooks/*.sh;
+      chown -R $${MAKEMKV_UID}:$${MAKEMKV_GID} /config/hooks
       '
     restart: "no"
 
@@ -49,6 +62,5 @@ services:
       - ${MAKEMKV_CONFIG}:/config
       - ${MAKEMKV_OUTPUT}:/output
       - ${MAKEMKV_COMPLETED}:/completed
-      - ./hooks:/config/hooks
     ports:
       - "${MAKEMKV_PORT}:5800"
