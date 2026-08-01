@@ -18,6 +18,7 @@ tardis (ds-s-01, 192.168.60.80 / tailnet "tardis")
 
 crafty (192.168.60.81 / tailnet "crafty")
   - minecraft-java    # vanilla Java server, RCON enabled
+  - makemkv           # disc ripper (rip-only, jlesage/docker-makemkv, auto-rip-on-insert); replaces arm
 ```
 
 Not deployed anywhere right now (repo definitions only):
@@ -27,7 +28,7 @@ Not deployed anywhere right now (repo definitions only):
   - nextcloud
   - minecraft-bedrock
   - internal / random / reverse-proxy
-  - arm               # disc ripper; host-agnostic, .env picks the drive/host — targeting crafty first
+  - arm               # disc ripper; superseded by makemkv (per-disc MakeMKV filename collisions across a TV series were unfixable without replacing it)
 ```
 
 Decommissioned: delamain (its stacks moved to tardis or were retired).

@@ -1,0 +1,25 @@
+services:
+  makemkv:
+    # jlesage/docker-makemkv: watches attached optical drives and rips
+    # automatically on insert (AUTO_DISC_RIPPER=1). Replaces the ripping
+    # half of the old `arm` stack — this container only rips to raw MKVs;
+    # identification/renaming/transcoding happen downstream, not here.
+    image: jlesage/makemkv:latest
+    container_name: makemkv
+    restart: unless-stopped
+    devices:
+      - ${MAKEMKV_DEVICE_SR}:${MAKEMKV_DEVICE_SR}
+      - ${MAKEMKV_DEVICE_SG}:${MAKEMKV_DEVICE_SG}
+    environment:
+      - USER_ID=${MAKEMKV_UID}
+      - GROUP_ID=${MAKEMKV_GID}
+      - TZ=${TZ}
+      - MAKEMKV_KEY=${MAKEMKV_KEY}
+      - AUTO_DISC_RIPPER=1
+      - AUTO_DISC_RIPPER_EJECT=1
+      - AUTO_DISC_RIPPER_MIN_TITLE_LENGTH=${MAKEMKV_MIN_TITLE_LENGTH}
+    volumes:
+      - ${MAKEMKV_CONFIG}:/config
+      - ${MAKEMKV_OUTPUT}:/output
+    ports:
+      - "${MAKEMKV_PORT}:5800"
