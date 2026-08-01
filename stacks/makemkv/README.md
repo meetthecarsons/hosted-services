@@ -14,6 +14,13 @@ into the same directory. Within a folder, files are named `<disc label>-
 `/config/.MakeMKV/settings.conf` on every `up`, replacing MakeMKV's own raw
 `C1_t00.mkv`-style fallback).
 
+`/output` only ever holds discs that are still ripping, or that failed.
+`./hooks/disc_rip_terminated.sh` moves a disc's folder from `/output` to
+`/completed` the moment MakeMKV reports success - so `/completed` is always
+safe for [disc-matcher](https://github.com/rcarson/disc-matcher) to read
+from without needing to guess whether a rip is still in progress. A failed
+rip is left in `/output` rather than promoted.
+
 ## Web UI
 
 `http://<host>:${MAKEMKV_PORT}` (noVNC) - shows drive/rip status.

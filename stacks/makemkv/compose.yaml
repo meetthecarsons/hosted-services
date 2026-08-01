@@ -48,6 +48,7 @@ services:
     volumes:
       - ${MAKEMKV_CONFIG}:/config
       - ${MAKEMKV_OUTPUT}:/output
+      - ${MAKEMKV_COMPLETED}:/completed
       - ./hooks:/config/hooks
     ports:
       - "${MAKEMKV_PORT}:5800"
