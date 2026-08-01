@@ -8,14 +8,15 @@ this stack is deliberately rip-only; those steps live downstream.
 
 Each disc gets its own output folder (`/output/DISC_LABEL/`, or
 `DISC_LABEL-XXXXXX` if that name is already taken), so two discs never write
-into the same directory.
+into the same directory. Within a folder, files are named `<disc label>-
+<track>.mkv` (the `makemkv-config` init service upserts MakeMKV's
+`app_DefaultOutputFileName` template - `{NAME1}-{AM2}` - into
+`/config/.MakeMKV/settings.conf` on every `up`, replacing MakeMKV's own raw
+`C1_t00.mkv`-style fallback).
 
 ## Web UI
 
-`http://<host>:${MAKEMKV_PORT}` (noVNC) - shows drive/rip status and lets you
-adjust MakeMKV's own settings (e.g. `app_DefaultOutputFileName` in
-`/config/.MakeMKV/settings.conf`, if per-title naming inside a disc's folder
-ever needs to change from MakeMKV's default).
+`http://<host>:${MAKEMKV_PORT}` (noVNC) - shows drive/rip status.
 
 ## Devices
 

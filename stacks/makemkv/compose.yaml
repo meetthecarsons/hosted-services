@@ -1,4 +1,25 @@
 services:
+  # Ensures MakeMKV's own settings.conf has our output-filename template set
+  # (<disc label>-<track>.mkv instead of MakeMKV's raw C1_t00.mkv fallback),
+  # without clobbering the rest of the file - notably app_Key, which MakeMKV
+  # itself writes there at runtime. Upserts one line; runs once per `up`.
+  makemkv-config:
+    image: busybox:latest
+    container_name: makemkv-config
+    volumes:
+      - ${MAKEMKV_CONFIG}:/config
+    command: >
+      sh -c '
+      mkdir -p /config/.MakeMKV;
+      touch /config/.MakeMKV/settings.conf;
+      if grep -q "^app_DefaultOutputFileName" /config/.MakeMKV/settings.conf; then
+        sed -i "s|^app_DefaultOutputFileName.*|app_DefaultOutputFileName = \"{NAME1}-{AM2}\"|" /config/.MakeMKV/settings.conf;
+      else
+        echo "app_DefaultOutputFileName = \"{NAME1}-{AM2}\"" >> /config/.MakeMKV/settings.conf;
+      fi
+      '
+    restart: "no"
+
   makemkv:
     # jlesage/docker-makemkv: watches attached optical drives and rips
     # automatically on insert (AUTO_DISC_RIPPER=1). Rip-only — this
@@ -7,6 +28,9 @@ services:
     image: jlesage/makemkv:latest
     container_name: makemkv
     restart: unless-stopped
+    depends_on:
+      makemkv-config:
+        condition: service_completed_successfully
     devices:
       - ${MAKEMKV_DEVICE_SR}:${MAKEMKV_DEVICE_SR}
       - ${MAKEMKV_DEVICE_SG}:${MAKEMKV_DEVICE_SG}
