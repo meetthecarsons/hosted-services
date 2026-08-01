@@ -1,9 +1,9 @@
 services:
   makemkv:
     # jlesage/docker-makemkv: watches attached optical drives and rips
-    # automatically on insert (AUTO_DISC_RIPPER=1). Replaces the ripping
-    # half of the old `arm` stack — this container only rips to raw MKVs;
-    # identification/renaming/transcoding happen downstream, not here.
+    # automatically on insert (AUTO_DISC_RIPPER=1). Rip-only — this
+    # container only produces raw MKVs; identification, renaming, and
+    # transcoding happen downstream, not here.
     image: jlesage/makemkv:latest
     container_name: makemkv
     restart: unless-stopped

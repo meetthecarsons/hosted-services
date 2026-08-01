@@ -6,11 +6,9 @@ in automatic-disc-ripper mode: insert a disc, it rips every title above
 the next one. No identification, renaming, or transcoding happens here —
 this stack is deliberately rip-only; those steps live downstream.
 
-Replaces the ripping half of the `arm` stack. `arm`'s own naming (raw
-per-title MakeMKV filenames colliding across discs of the same series) was
-the trigger for switching — this image sidesteps that by giving every disc
-its own output folder (`/output/DISC_LABEL/`, or `DISC_LABEL-XXXXXX` if that
-name is already taken), so two discs never write into the same directory.
+Each disc gets its own output folder (`/output/DISC_LABEL/`, or
+`DISC_LABEL-XXXXXX` if that name is already taken), so two discs never write
+into the same directory.
 
 ## Web UI
 
@@ -29,6 +27,5 @@ assuming device numbering matches across hosts or reboots.
 
 ## Registration key
 
-Runs on MakeMKV's rotating beta key by default (`MAKEMKV_KEY=BETA`) - same
-as the old `arm` stack did (`MAKEMKV_PERMA_KEY` was always left blank there).
-Restart the container if ripping starts failing with a key-expired error.
+Runs on MakeMKV's rotating beta key by default (`MAKEMKV_KEY=BETA`). Restart
+the container if ripping starts failing with a key-expired error.
