@@ -26,5 +26,17 @@ wget -q -O /dev/null \
 # /completed. A failed rip is left in /output for manual inspection instead
 # of being promoted.
 if [ "$STATUS" = "SUCCESS" ]; then
+  # MakeMKV's own settings.conf template only produces the track number
+  # (e.g. "01.mkv") - the disc label prefix is added here, from jlesage's
+  # own reliable argument, rather than via MakeMKV's {NAME1} token (reads a
+  # disc-internal metadata field that's empty on some discs).
+  for f in "$OUTPUT_DIR"/*.mkv; do
+    [ -e "$f" ] || continue
+    base=$(basename "$f")
+    case "$base" in
+    "${DISC_LABEL}-"*) ;; # already prefixed - leave as-is
+    *) mv "$f" "$OUTPUT_DIR/${DISC_LABEL}-${base}" ;;
+    esac
+  done
   mv "$OUTPUT_DIR" "/completed/$(basename "$OUTPUT_DIR")"
 fi

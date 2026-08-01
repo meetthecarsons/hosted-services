@@ -8,11 +8,7 @@ this stack is deliberately rip-only; those steps live downstream.
 
 Each disc gets its own output folder (`/output/DISC_LABEL/`, or
 `DISC_LABEL-XXXXXX` if that name is already taken), so two discs never write
-into the same directory. Within a folder, files are named `<disc label>-
-<track>.mkv` (the `makemkv-config` init service upserts MakeMKV's
-`app_DefaultOutputFileName` template - `{NAME1}-{AM2}` - into
-`/config/.MakeMKV/settings.conf` on every `up`, replacing MakeMKV's own raw
-`C1_t00.mkv`-style fallback).
+into the same directory.
 
 `/output` only ever holds discs that are still ripping, or that failed.
 `./hooks/disc_rip_terminated.sh` moves a disc's folder from `/output` to
@@ -20,6 +16,15 @@ into the same directory. Within a folder, files are named `<disc label>-
 safe for [disc-matcher](https://github.com/rcarson/disc-matcher) to read
 from without needing to guess whether a rip is still in progress. A failed
 rip is left in `/output` rather than promoted.
+
+Files are named `<disc label>-<track>.mkv`. MakeMKV itself only produces the
+track number (`makemkv-config` sets `app_DefaultOutputFileName = "{AM2}"` in
+`/config/.MakeMKV/settings.conf`) - the `<disc label>-` prefix is added by
+`disc_rip_terminated.sh` during the move to `/completed`, using the disc
+label jlesage itself passes to the hook. This is deliberate: MakeMKV's own
+`{NAME1}` template token reads a disc-internal metadata field that's empty
+on some discs (confirmed on this household's "My Life is Murder" S2 set),
+silently dropping the prefix if relied on directly.
 
 ## Web UI
 

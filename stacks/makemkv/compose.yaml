@@ -1,8 +1,14 @@
 services:
-  # Ensures MakeMKV's own settings.conf has our output-filename template set
-  # (<disc label>-<track>.mkv instead of MakeMKV's raw C1_t00.mkv fallback),
-  # without clobbering the rest of the file - notably app_Key, which MakeMKV
-  # itself writes there at runtime. Also copies the hook scripts into
+  # Ensures MakeMKV's own settings.conf sets an output-filename template of
+  # just the track number ({AM2} - MakeMKV's own C1_t00.mkv-style fallback
+  # naming is what happens with no template at all). The <disc label> prefix
+  # is deliberately NOT done via MakeMKV's own {NAME1} token - that reads a
+  # disc-internal metadata field which is empty on some discs (confirmed:
+  # DVDs in this household's "My Life is Murder" S2 set), silently dropping
+  # the prefix. disc_rip_terminated.sh adds it instead, using the disc label
+  # jlesage itself passes in - reliably the same thing that named the
+  # folder, unlike MakeMKV's internal metadata.
+  # Also copies the hook scripts into
   # /config/hooks rather than bind-mounting ./hooks there directly - jlesage's
   # entrypoint chowns everything under /config to MAKEMKV_UID/GID on startup,
   # which (via a direct bind mount) reaches through to the host and leaves
@@ -23,9 +29,9 @@ services:
       mkdir -p /config/.MakeMKV /config/hooks;
       touch /config/.MakeMKV/settings.conf;
       if grep -q "^app_DefaultOutputFileName" /config/.MakeMKV/settings.conf; then
-        sed -i "s|^app_DefaultOutputFileName.*|app_DefaultOutputFileName = \"{NAME1}-{AM2}\"|" /config/.MakeMKV/settings.conf;
+        sed -i "s|^app_DefaultOutputFileName.*|app_DefaultOutputFileName = \"{AM2}\"|" /config/.MakeMKV/settings.conf;
       else
-        echo "app_DefaultOutputFileName = \"{NAME1}-{AM2}\"" >> /config/.MakeMKV/settings.conf;
+        echo "app_DefaultOutputFileName = \"{AM2}\"" >> /config/.MakeMKV/settings.conf;
       fi;
       cp /hooks-src/*.sh /config/hooks/;
       chmod +x /config/hooks/*.sh;
