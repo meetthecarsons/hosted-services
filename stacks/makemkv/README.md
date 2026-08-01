@@ -29,3 +29,13 @@ assuming device numbering matches across hosts or reboots.
 
 Runs on MakeMKV's rotating beta key by default (`MAKEMKV_KEY=BETA`). Restart
 the container if ripping starts failing with a key-expired error.
+
+## Notifications
+
+`./hooks/disc_rip_started.sh` and `./hooks/disc_rip_terminated.sh` post to
+the `NTFY_TOPIC_READY` topic (via jlesage's `/config/hooks/` mechanism) when
+a disc starts and finishes ripping, so whoever's swapping discs knows when
+it's safe to open the drive. Both messages include the disc label. A failed
+rip posts to the same topic with a `FAILED` title rather than a separate
+alerts topic — this host doesn't have the homelab alerting kit's `alerts`/
+`info` topics deployed yet.

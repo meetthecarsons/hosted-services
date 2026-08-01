@@ -18,8 +18,12 @@ services:
       - AUTO_DISC_RIPPER=1
       - AUTO_DISC_RIPPER_EJECT=1
       - AUTO_DISC_RIPPER_MIN_TITLE_LENGTH=${MAKEMKV_MIN_TITLE_LENGTH}
+      # read by ./hooks/*.sh (ntfy notifications on rip start/finish)
+      - MAKEMKV_HOST_LABEL=${MAKEMKV_HOST_LABEL}
+      - NTFY_TOPIC_READY=${NTFY_TOPIC_READY}
     volumes:
       - ${MAKEMKV_CONFIG}:/config
       - ${MAKEMKV_OUTPUT}:/output
+      - ./hooks:/config/hooks
     ports:
       - "${MAKEMKV_PORT}:5800"
