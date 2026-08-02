@@ -26,3 +26,7 @@ scrape_configs:
     metrics_path: /api/metrics
     static_configs:
       - targets: ['galileo.eland-wyrm.ts.net:5000']
+
+  - job_name: palworld
+    static_configs:
+      - targets: ['crafty.eland-wyrm.ts.net:18212']
