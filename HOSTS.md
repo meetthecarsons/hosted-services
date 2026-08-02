@@ -8,7 +8,7 @@ Stacks on tardis run from deployed copies under `/opt/stacks/<stack>` (see
 
 ```
 tardis (ds-s-01, 192.168.60.80 / tailnet "tardis")
-  - arrgh-proton      # gluetun VPN + qbittorrent + *arr download suite
+  - arrgh-proton      # gluetun VPN + qbittorrent + *arr download suite (incl. listenarr, audiobooks)
   - audiobookshelf    # audiobook library + progress sync (tailnet "audiobooks")
   - glance            # dashboard (tailnet "glance")
   - immich            # photos (tailnet "photos")
