@@ -150,7 +150,7 @@ services:
     # BAZARR: Subtitle downloader - connects to Sonarr/Radarr and fetches subtitles
 
   listenarr:
-    image: ghcr.io/listenarrs/listenarr:latest
+    image: ghcr.io/listenarrs/listenarr:canary  # no :latest tag published yet
     pull_policy: always
     container_name: listenarr
     network_mode: "service:gluetun"  # Uses gluetun's VPN network
@@ -159,7 +159,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
     volumes:
-      - ${APPDATA_DIR}/listenarr/config:/config
+      - ${APPDATA_DIR}/listenarr/config:/app/config  # note: /app/config, not /config
       - ${DATA_DIR}:/data
     depends_on:
       - gluetun
