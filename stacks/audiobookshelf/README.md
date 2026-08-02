@@ -1,8 +1,9 @@
 # Audiobookshelf
 
 Audiobookshelf with a Tailscale sidecar (`audiobookshelf-ts`) for tailnet
-access, for the owner's wife's audiobook library (see
-`planning/audiobook-library.md` in the outer repo).
+access, serving both the owner's wife's audiobook library (see
+`planning/audiobook-library.md` in the outer repo) and a shared podcast
+library (see `planning/podcast-library.md`).
 
 ## How it's wired
 
@@ -22,6 +23,11 @@ access, for the owner's wife's audiobook library (see
   (`/mnt/bulk-pool-01/data/media/audiobooks`), the same path the
   `syncthing` stack's `_incoming` folder lands purchased zips into and
   (eventually) the Listenarr torrent-acquisition path hardlinks into.
+- `ABS_PODCASTS` bind-mounts a second library root
+  (`/mnt/bulk-pool-01/data/media/podcasts`), added as a separate
+  Audiobookshelf library of type Podcast. Unlike audiobooks, nothing
+  external populates this path — Audiobookshelf's own scheduler downloads
+  new episodes directly from each subscribed show's RSS feed.
 
 ## Metadata providers
 

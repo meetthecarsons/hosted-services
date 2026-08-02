@@ -11,6 +11,7 @@ services:
       - ${ABS_CONFIG}:/config
       - ${ABS_METADATA}:/metadata
       - ${ABS_AUDIOBOOKS}:/audiobooks
+      - ${ABS_PODCASTS}:/podcasts
     restart: unless-stopped
 
   tailscale:
