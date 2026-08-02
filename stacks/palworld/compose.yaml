@@ -35,3 +35,16 @@ services:
       - "8212:8212/tcp"
     volumes:
       - ${DATA_DIR}:/palworld
+
+  palworld-exporter:
+    image: jimmysharp/palworld_exporter:latest
+    restart: unless-stopped
+    environment:
+      SCRAPE_URI: "http://palworld:8212/v1/api/metrics"
+      HTTP_USER: "admin"
+      HTTP_PASSWORD: ${ADMIN_PASSWORD}
+      LISTEN_ADDRESS: ":18212"
+    ports:
+      - "${EXPORTER_PORT}:18212"
+    depends_on:
+      - palworld

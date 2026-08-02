@@ -27,6 +27,13 @@ reboot — no custom scripting needed for either.
 - `SERVER_PASSWORD` gates joining; `ADMIN_PASSWORD` doubles as the RCON
   auth password (Palworld's RCON protocol is tied to the admin password,
   there's no separate RCON credential).
+- `palworld-exporter` ([`jimmysharp/palworld_exporter`](https://github.com/jimmysharp/palworld_exporter))
+  polls `palworld`'s own REST API `/v1/api/metrics` endpoint over the
+  stack's internal Docker network and re-exposes it in Prometheus format on
+  `EXPORTER_PORT` (default `18212`) — server FPS, frame time, player count,
+  uptime. Reuses `ADMIN_PASSWORD` for the REST API's basic auth, no separate
+  credential. Not yet scraped by any Prometheus instance — that's a
+  separate step on whichever host runs Prometheus.
 
 ## Start with
 
