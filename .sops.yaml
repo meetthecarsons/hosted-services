@@ -2,7 +2,11 @@ keys:
   # deprecated-vaultwarden — kept as a recipient until the new keys below are
   # confirmed working end-to-end; remove once that's verified.
   - &deprecated_vaultwarden age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n
-  - &host_tardis age152fzrgqgalk7rqrhlhg5ne0zsldneewqcufxfplk8c7w2nvavgmsuchkn7
+  # tardis's host identity, derived from its /etc/ssh/ssh_host_ed25519_key.pub
+  # (regenerated 2026-08-02 — tardis had no local age key at all and the
+  # previous entry here no longer matched its current host key, so deploys
+  # run directly on tardis were silently unable to decrypt any secret)
+  - &host_tardis age124jmz0katpuwr0nka0ds2hgkzdrhyn274879hm56naszwcqm0vkq7zm9w9
   # Robert's personal admin key, derived from ~/.ssh/id_ed25519 (same key
   # used in nixos-configs/.sops.yaml)
   - &admin_robert age1du6qgru89dz5ykcqlw97vear78ya8e5yu65ja80dlu52kdhn44msk6r58k
