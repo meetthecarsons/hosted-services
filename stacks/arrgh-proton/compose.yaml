@@ -15,6 +15,7 @@ services:
       - "7879:7879"  # Radarr-anime
       - "9696:9696"  # Prowlarr
       - "6767:6767"  # Bazarr
+      - "4545:4545"  # Listenarr
     environment:
       - VPN_SERVICE_PROVIDER=protonvpn
       - VPN_TYPE=wireguard
@@ -147,6 +148,23 @@ services:
       - radarr
     restart: unless-stopped
     # BAZARR: Subtitle downloader - connects to Sonarr/Radarr and fetches subtitles
+
+  listenarr:
+    image: ghcr.io/listenarrs/listenarr:latest
+    pull_policy: always
+    container_name: listenarr
+    network_mode: "service:gluetun"  # Uses gluetun's VPN network
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - ${APPDATA_DIR}/listenarr/config:/config
+      - ${DATA_DIR}:/data
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+    # LISTENARR: Audiobook manager - automatically finds, downloads, and organizes audiobooks
 
   recyclarr:
     image: ghcr.io/recyclarr/recyclarr:latest
