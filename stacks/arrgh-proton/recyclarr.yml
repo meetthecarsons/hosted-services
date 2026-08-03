@@ -188,8 +188,6 @@ sonarr:
                 - c81bbfb47fed3d5a3ad027d077f889de
               assign_scores_to:
                 - name: Remux-1080p - Anime
-                  # highest score for BD source groups
-                  score: 1000
             - trash_ids: null
               # Anime Web Tier 01
             - trash_ids:
@@ -233,11 +231,13 @@ sonarr:
                 - 9965a052eb87b0d10313b1cea89eb451
               assign_scores_to:
                 - name: Remux-1080p - Anime
+                  score: 975
             - trash_ids:
                 # Remux Tier 02 (TRaSH)
                 - 8a1d0c3d7497e741736761a1da866a2e
               assign_scores_to:
                 - name: Remux-1080p - Anime
+                  score: 950
             - trash_ids:
                 # Anime Raws (negative by default)
                 - b4a1b3d705159cdca36d71e57ca86871
@@ -267,13 +267,21 @@ sonarr:
             - trash_ids:
                 # 10bit
                 - b2550eb333d27b75833e25b8c2557b38
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  score: 10
+            - trash_ids:
                 # Anime Dual Audio
                 - 418f50b10f1907201b6cfdf881f467b7
+              assign_scores_to:
+                - name: Remux-1080p - Anime
+                  # Dual-Audio: prefer one tier above, per guide
+                  score: 101
+            - trash_ids:
                 # Uncensored
                 - 026d5aadd1a6b4e550b134cb6c72b3ca
               assign_scores_to:
                 - name: Remux-1080p - Anime
-                  # Dual-Audio preference per guide
                   score: 10
             # ==================== ANIME STREAMING SERVICES ====================
             - trash_ids:
@@ -348,8 +356,10 @@ sonarr:
                 - 47435ece6b99a0b477caf360e79ba0bb
               assign_scores_to:
                 - name: Remux-1080p - Anime
-                  # Align with TRaSH defaults (avoid inheriting unexpected positives)
-                  score: -10000
+                  # Not in TRaSH's intended profile list for this CF group (only
+                  # WEB/Remux TV + German anime are); x265 is the anime scene's
+                  # dominant codec, so don't blanket-block it here.
+                  score: 0
             - trash_ids:
                 # Bad Dual Groups
                 - 32b367365729d530ca1c124a0b180c64
