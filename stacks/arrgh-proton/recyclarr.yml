@@ -5,7 +5,7 @@ sonarr:
     # MAIN SONARR INSTANCE - 2160p and 1080p profiles
     tv:
         base_url: http://127.0.0.1:8989/sonarr
-        api_key: ENC[AES256_GCM,data:KZrDQ/XLEiMeZwPoJkVMT2dOqBnjVR0/MSybsnNyyhs=,iv:96NOrstLr+BKh4Q+9Sw/WQ3NtIaqOSMADpEaQ9qyH7Q=,tag:OXEQwmxZFjhHr9AKD2kqxw==,type:str]
+        api_key: ENC[AES256_GCM,data:k0ekiMV1ODxxHHvdz+PwVataJZ3ptl+hzS9nAdcMPJc=,iv:1gdQ+/JbHOhNUhWCmNmuYd+P3UH1tn8w/JNglUScK20=,tag:XJNWLrcmr6TErHvQzWX1lA==,type:str]
         # manual Sonarr quality profiles
         quality_profiles:
             - name: WEB-2160p
@@ -129,7 +129,7 @@ sonarr:
     # ==========================================================================
     anime:
         base_url: http://127.0.0.1:8990/sonarr-anime
-        api_key: ENC[AES256_GCM,data:3GyomYq+4+ByqJKQrvU264pAy5e4cLq1nhi8aNhknvc=,iv:xpiP53jjeXXNPoYtlfyyEyNv3C5TyaM8tIhOJgfMZFk=,tag:SbmzWElswVqdmL29k8wxyg==,type:str]
+        api_key: ENC[AES256_GCM,data:9X/OtYNw5EDhtUEA0J8A3PiFiTIr78ugNYeamrUL5yc=,iv:FTge8EFJZXWx48jDkkFxRrZpw2eX4EUGCwI7GUPGT60=,tag:VAGQ+keWzwnaD2yX+UNVjw==,type:str]
         quality_definition:
             type: anime
         # manual anime profile
@@ -387,7 +387,7 @@ radarr:
     # MAIN RADARR INSTANCE - UHD and HD profiles
     movies:
         base_url: http://localhost:7878/radarr
-        api_key: ENC[AES256_GCM,data:N/mTnlfvCtz9Dq87vWlyLgvD9I2fi4jC8sgr8Luso+I=,iv:gyUbyWD5vVnMfZO2BeKe5GhSAdIIxP5pMPeTvCamHR0=,tag:RAkvZOBbceTqC2UZ+Lcz4A==,type:str]
+        api_key: ENC[AES256_GCM,data:r3wd4xn+7yoHFVcQQywD1dZTCnD8YnUDlpqfDjbP2Mk=,iv:+fDbTZjw1j4jhSAShX2e8H23BZc4XHxdjmQMl3qvh60=,tag:xMKgXy8kfqRFAFEtxPcbgQ==,type:str]
         # manual quality definition/profile for movies
         quality_definition:
             type: movie
@@ -858,7 +858,7 @@ radarr:
     # ==========================================================================
     anime-movies:
         base_url: http://localhost:7879/radarr-anime
-        api_key: ENC[AES256_GCM,data:be2lcU7DDiceBeEoHocx2RqHu3K8zVRiVZH1JoNMEq0=,iv:ONvq1SmfpFffgFohxMXXwUCnY8cxwazL5Ol76wPdhJ4=,tag:or4E7hIPCu3OWVl+pRNfTA==,type:str]
+        api_key: ENC[AES256_GCM,data:ugvBaY/9viM8sLfJvH0ezYnjQ1EhwPE0wsR9abFmw4I=,iv:1Tt43ZZqTU3amHCXcmyNnZ5Gu6YwgkQSsJnw4rbnEJg=,tag:AmcLfuZyr74Movp4XQj8GQ==,type:str]
         quality_definition:
             type: anime
         # manual anime profile for radarr
@@ -1032,8 +1032,8 @@ radarr:
                 - name: Remux-1080p - Anime
                   score: -10000
             - trash_ids:
-                # x265 (HD)
-                - 47435ece6b99a0b477caf360e79ba0bb
+                # x265 (HD) - Radarr's own trash_id, distinct from Sonarr's
+                - dc98083864ea246d05a42df0d05f81cc
               assign_scores_to:
                 - name: Remux-1080p - Anime
                   # Same call as the Sonarr anime profile: this format's
@@ -1101,41 +1101,41 @@ sops:
     age:
         - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAwbFh6M2hhVGt6dTEzMFRx
-            Q29FUzBlZ08wQ293NFVPd3JQd0lEYmgzenhrCmw5MjBSMmF0NlAxcnlWQ2Fycnk2
-            TUs0QUdFNWlyNk91d0Z5a0Yxd2t3L1EKLS0tIG5IdFZlSFZMWE5ZL2duM0JFZVh2
-            bXZTaXM0aE1XZjhqTTBzZXorRWJQUDgKuHw6kj4SLfa6pFjjykUIdXqLR9x0coU4
-            o2LkGnOj8QcPIK22PzydMbnjTZ7NEEus4OxvqMVIShgdo3b1uTUh5A==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBzNFZsTDd4U3c3UzdhcGx6
+            RGpreWNXTTFtWmpQZW1Gd3Z1TmZOcE9Fa244Ck0vYkxVWFRWdm9Dc0hCQkRhdHV6
+            b3pVNmI1dWtadmdNc0NBUzloamtKc28KLS0tIG9ERlk4aEo1NHdkZ3NRQkRSQWdr
+            T0pHbFcrS21rQVBNYmE0Q3dhVjBhWVkK0FiZSEFrBMGAlZrC+8Ve0Xuuz+uZD8Hz
+            0sF1HUk8KiWmaLYqcZvrn+x2aJGw1JFAp4pka6o5V+5g55O4ooNOww==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n
         - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA4dzRGYjRGNzV6bHBrUWhy
-            MHh6dmNrdmVrL2ZOb3VxTk5PR2c0OUZWMWdZCmtJa0JvWGhYcWs2YTFhZ2M2Sjlp
-            WldJcElEK3lnWFNyK2c0MndxSlV6aFUKLS0tIGtnZGhwZXR2dHAreWNWSU1VK0Mv
-            Y2J6K3kzblhDZ1d4YjkvUzIzT3RlNjgK6mJUC0JXYOgFVCJxmYjom8+A9oLrFvBG
-            9QH6eNMC+Ehib/x3+Fh0+8sIw6d9FZgP1Bwkxi06SnVHx1+FlL1whw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB3U3REWkV3UWRObDVNSnQ0
+            Q1c4d0t0MDZxWWVFa3JjOE5nYyt1SmxRdW1nClhMNWF2ZTdJOFlTMHhwd0VPVXZ1
+            UU5jaHFqZ2Fxem13aENXWHdRUC94czgKLS0tIFkyeEFZb0k5eXFHNHM2T2VjRk1p
+            RjZmVEhWTXVMRTBTbzFZZXg3THByNE0KzB6UvAVEbRgCuppDRGTKebIAaVUNKETV
+            Q5O7oaikKO6/GLtLFqoZ6B5rVtefCHVp8KdQaFUnGs6j2Oyz1gvHHA==
             -----END AGE ENCRYPTED FILE-----
           recipient: age124jmz0katpuwr0nka0ds2hgkzdrhyn274879hm56naszwcqm0vkq7zm9w9
         - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB5cmI5YmdqbHc5cjVPV1NJ
-            cTF2SVlUNU9HT0FNd2ZvTGZsQUZVSGlVTzNrCkk4ek5wc2NXb1ZzVmplSWpYSmdT
-            SGVNTXJqZ3FrcWt3bmtvcGFYQ1Y1cWcKLS0tIEpwUWNqaFc4RlBKWnBXa2hINzFv
-            ZG5LUW0rc0IrdkVPU0o2VFZzcmRTL28KQ5cxT2UjQeYUYnuqA1LNOkIMPe25AfzW
-            n0RYjvzPPUwYSR31sZWrnIGFuI0CE4JG9D5eIB7KJ8Xw1vT+vhfsoQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBJelFxdnROVm5sdDgwQTZS
+            WU1TTEY3cThjVzZPbnpwaTgraG51QzhQNGtrCm9sNncyLzJVWUgzUm5yM0szUTZW
+            OTRadEw4dnlZanZYZ0xSNkNSWkUyeUkKLS0tIFlxMWRFVSt0dXp4dzFPNC9rUHJU
+            a01CVEJyNzdKVkhyUXhtTnhPOTBGbjQK7kGm8PqobhMb8emApVE8/HYT4gY8s91q
+            5Oz2Q1SNqc7VzGZU3xfAabrDKGaoSVN6AEEZ2BxgigC0RgJXRZfsDw==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1du6qgru89dz5ykcqlw97vear78ya8e5yu65ja80dlu52kdhn44msk6r58k
         - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA5dXVVMldHOXh3VUE3eW1D
-            cmw4dXlTSkdackhiQkdkN3RyaEF2Uy8vS2djCkRwQ1hnUUFhOVFjV1VMeXRsUzFs
-            SDU4Mlpzd1IxN3YvSlF0NXUxbmszSnMKLS0tIDJPL0ljR3hoWUI3aWVUWWkxNHFo
-            YkZrYzZTVStXc1lLT1k0dXVnejNuUzgKFJ8J9K65TewOxjRiLh35vVv/GQR1+3MS
-            4cjKt58VcSolQfLANLWFGwJxoEWlFdZcJbFZYZwop6VgHYr7d6Teiw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBKUXcxeklSWE5HRnB4ZXZX
+            cDBpNDNEWDc4ZUQwNUNjbFo3MlRDYTVoSm1BClQzSkZVaXlsdEpESWNGdndHSmhJ
+            QXVnVE5yR2cra3oxdmJxUkl0Z05Jc0kKLS0tIEU4b1ExYWZPNGcvVXUreW55NllV
+            bzc0d3VNRWhYTEZJcTRBTG40VkZGamMKlOpZdTkAkl/cYjU+LzwCmxZ13MTfy80+
+            6zjAIOaRm1ehida1HlJxn60V3Qbse5XLWXL6mx9d7EPbLfZ4r96PBA==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1awn52s00phd36c044m52wxxgsw4vndtmpn8ft5vprnagz70gnqqq28w9jn
     encrypted_regex: ^(password|secret|api_key|token|private_key)$
-    lastmodified: "2026-08-03T20:04:49Z"
-    mac: ENC[AES256_GCM,data:+nZF07gFlE8oTNmGwTpbAHv6bbDPh3+GsNvGTTo/LVnsAtK78OsxmjvSiayJPdZogDVn2nhFzJlgAiNC8rQ8mPGPpq+HgtJQ9fq1qe7tpuXrLOKf7TcDUDp63nWuLDJ6+uqMcFPY4FUxhdIyGqyosjazOOkk6/IhnjYdW8SYIqQ=,iv:OeIjj+fsY0V3ezetWtWonyTsankYGUeUGkUlyd0gi0s=,tag:LW0vedXngP13jhagx+ThOw==,type:str]
+    lastmodified: "2026-08-03T20:09:41Z"
+    mac: ENC[AES256_GCM,data:k581v/dMHJuVj0xlQxG9r2aoJHa9DcQaK6AW9rf2vLYzj+N/gAxPdX1YQCMNN4bSeSA2s516ySKOuv/juCdRI7+P/GljPBJmpmXb5Lzf6UsmKrw5552wPuQKug8qpnDVIpOCZYH2W63tXjZwPMXkORVPeyBbhqTwAng7chyzIUM=,iv:qtOtIhQLyN0MgiPGIT+VFbVGh0OV8aCWIRPzfIzkWYo=,tag:LYX+SLCJ9YGKnrZTIGrMpQ==,type:str]
     version: 3.13.2
