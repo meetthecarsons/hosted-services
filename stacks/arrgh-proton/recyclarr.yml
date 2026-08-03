@@ -5,7 +5,7 @@ sonarr:
     # MAIN SONARR INSTANCE - 2160p and 1080p profiles
     tv:
         base_url: http://127.0.0.1:8989/sonarr
-        api_key: ENC[AES256_GCM,data:N+baU+5sjopWBvAYt1+BQ+A+W6iEt0amPIij61Ziu4M=,iv:47EUwSB9rPhA2DXgSuhjijzvkfqt22IWOk9Z38i4Azg=,tag:3i8VbWDnh8wBOeDZMx7Ywg==,type:str]
+        api_key: ENC[AES256_GCM,data:MftDRDgmI9JJ20a/F1roOmtPq4ly7XSjOOYRC7IEV2Q=,iv:NhyCPIckgCFu/bAOTPqbB7FNAXGb+T/IYrMQyIq38VM=,tag:vwhH0HHuXUgeEsanwB8Vyg==,type:str]
         # manual Sonarr quality profiles
         quality_profiles:
             - name: WEB-2160p
@@ -129,7 +129,7 @@ sonarr:
     # ==========================================================================
     anime:
         base_url: http://127.0.0.1:8990/sonarr-anime
-        api_key: ENC[AES256_GCM,data:SfJJbR1gZYKtInl41M3DjeNQjiPHpqEPFTWNAug7LaI=,iv:guxgZChnKbrzhn9YyRhtWbKBEBonf8ek0NlG2Py/6gg=,tag:eLfJZGVGOimCXy/3eE5OZQ==,type:str]
+        api_key: ENC[AES256_GCM,data:zYvLHXo1i4AG01UNJOVdkmS0JaFGebvJ4YDmAiY/pnI=,iv:xFOL51/8KuMjzZzytS3smZJhhUAm5NIARceG7N7JgVY=,tag:8pMCVSki0OHYcBRyOWq9iA==,type:str]
         quality_definition:
             type: anime
         # manual anime profile
@@ -146,8 +146,6 @@ sonarr:
               quality_sort: top
               qualities:
                 - name: Bluray-1080p
-                  qualities:
-                    - Bluray-1080p
                 - name: WEB 1080p
                   qualities:
                     - WEBDL-1080p
@@ -389,7 +387,7 @@ radarr:
     # MAIN RADARR INSTANCE - UHD and HD profiles
     movies:
         base_url: http://localhost:7878/radarr
-        api_key: ENC[AES256_GCM,data:Bmh3E6pxSUtlxwMQy8tj/ugBwSVp00N4AEw5JHDcDwI=,iv:sM5WwywJGAfu0WlcrQyqk61+kdzKT93344yfe9S7Q/o=,tag:4waqyn/pvmcHif1ZgUVnrA==,type:str]
+        api_key: ENC[AES256_GCM,data:P2yjYGbBzDkBRFG7dkL9cAs0/6ESgLu1Uq41w7GsvnA=,iv:xLrOVj2ltG+CFvGbRWIUhhnXuTXKqkXdQ8LsJS+6BXU=,tag:xhYbCBWOroB1UZ/m2Xo4hw==,type:str]
         # manual quality definition/profile for movies
         quality_definition:
             type: movie
@@ -860,7 +858,7 @@ radarr:
     # ==========================================================================
     anime-movies:
         base_url: http://localhost:7879/radarr-anime
-        api_key: ENC[AES256_GCM,data:3X+LDehh9Mwn7S//5wMnwqbf7PQvZ2TWPcwxcPXKpfU=,iv:eVvVv7mg6u851zu1sJ9m9s2LNDdwvLbhMLRuxJtMMUI=,tag:aajlP2WCJ6xfECUJ4ppU9Q==,type:str]
+        api_key: ENC[AES256_GCM,data:jt+BGz4RKYd/IjD0kUwk+o/JIPkolD5DovAud2N4KrQ=,iv:4eOOZDBavU+kaq3XUouFM+z/HOGw8pU7+0WEW8aTal4=,tag:yAy82gRtL1FKG7Dm+rGdNQ==,type:str]
         quality_definition:
             type: anime
         # manual anime profile for radarr
@@ -1095,41 +1093,41 @@ sops:
     age:
         - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBmcDBMRko2aHZQSEdaelJE
-            MHA1RGNaWkRWbXR3UW1IU1V5bFBsV3F5WmtnCjN0RnlRcE9HOVRtWVhJTjJDc0dH
-            TmlULzg4SDN1dUd5SHJVY1dNVklvQWcKLS0tIDVpa2VpYk4vWEJwWFBCcjlBeW5M
-            K0JyUjB3d05wL3JrdkhuR0NETS9WZFkKgoZoKEFSpPhi4CerBVmjEJ+SPvKKxFfN
-            dvj8uo3rlo8PhOl+t+XzeAvPJGXOxB7RsyymijAi/ioIyWK5hH2UuA==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBSRVdVVkhPWVR0VkMyTC90
+            SVJFWWdtWU5BQ05ibWQ2VmE0Sy85Zkg5WFRVClBQNjdzSmpUM3V4cTVhcHUwSjRu
+            b2RlbFRqcis5RFRiSDBFZ0xSMGVENjgKLS0tIG5NVUs3WmNHRUJhTXF2bHV5S1dJ
+            UjBXbXNueXJOQklHRlY2UkU0cmVMbkkKI8vzU5ineQN08eAgAgPPdAAdwFxYQmPq
+            7eXSZH6F28THQYyr0gJVf5wgTVCS6sURFR10LtvKzYXXIjnKk8raFQ==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1mttfy2j584k0qrug9n7vcglav9e3lp49mxvla0xdjpp7h7t2ndusrvk03n
         - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBJL283ZXZRRmtkV0l5Q0h2
-            b0IwWHBSVjJsU1pZZ2xDSUZYVFRBcTc5bmtJCm43aE50dGxmNmpVZmd6S1NObUgv
-            Sm5UNmlNQ3UrTjRhaG41UUhhTyt2QkUKLS0tIGhOSkJ0RjdXQXRRUmRkSFN2WGg5
-            aFQzU256bks3NFNyK2E4TXhJdXZUUUEKozustUuBAbJxyNtunZY4MXcdgTBmLFzG
-            XOv+exqRncip5hnryfD8D1Qt6GrCgLmF0J0efyjQ68UxJDHKk4USug==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA2T2RCdWNMMkNwamlOTjdx
+            ajNpMW53Z3lUNTZnZU1zWDd1VFF5V2ZpT1R3Cm1hb1A3S1lIM0VKS0kzT0FHSHZQ
+            OHRRN1FZOFd1WWI4T09BODVWY3lHVzAKLS0tIDI3cmFZMW9CVks4YXdDZWZ3T1Q1
+            R1l5L0xXeTVkQXBjNStnL2RqZW14d1EKIuphOjgrQUPtCLk3Z8ttN237FIBeM/wm
+            VRGX6hDuyHnFk9W6tj0fT8LbcfFFgblqfxcmOZoTi0VlB2wM1ymB/w==
             -----END AGE ENCRYPTED FILE-----
           recipient: age124jmz0katpuwr0nka0ds2hgkzdrhyn274879hm56naszwcqm0vkq7zm9w9
         - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBZcU9hNjhBODZtRURsL0t6
-            YlBMR1BUZzUrclFzaUdZWWtDR3E5SWlJdEV3CndXakQ3blZoRm50VEV3Ti8yNnI0
-            Z0V1VW5lTkhIY1dSa2tXVzdoYVRlTGMKLS0tIGZlZ2pyTHozalc5WXJISFVrY2ll
-            ZEFlb1NwcmgxdkJvWDBESjY3Wm9MSnMKblKtcqLOk/8Cyah7qtJNVkBhsGWbRB1e
-            kPs0TFceqrruhg55K8Aq/zKaIAVgCOkS8qx8u91xqmXL3EPXg7ORKw==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBBRlhHZk1iazA5bVdLVWxt
+            MjFMSlJSVi9seURsdElWeSsrUnhxem56SlRjCjh6MkpFTDNYSERDeFU1VU5NU1Fz
+            UWc4VSs2N0JrdFZCTk5aQ2tGS1MvMG8KLS0tIDNmSjR2S0pWa3JxTWthazhHblNh
+            WU94NWx1YVY0NldOeEF4ZTdiK0VQczgKGdRDEXdmGTxJh3cfEYnDKFv+F1HxG/Fb
+            Ut0QuID/ABCo2/h0Lsja4695tWy43g4mPD8Kb+qDJMHGSw+8WhHIbQ==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1du6qgru89dz5ykcqlw97vear78ya8e5yu65ja80dlu52kdhn44msk6r58k
         - enc: |
             -----BEGIN AGE ENCRYPTED FILE-----
-            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlSXgvb2N0d21MSFQySS9n
-            NVpmOWlsRjZHZFVnVm53cDFmSzN0M1R4MkNzCnk0ZldYZ3NWSmVqUGhHRW8wQUtR
-            YVB6VE8yWmtZUGtxM3VTa1ovYmsweEEKLS0tIGpRZms5KzVacjFSSEg2b09HYUlp
-            Z3ZEdllYVW1lOG40cEp1UEovRlJxZmMKbys7NK4kzWRSeIFC4RDoVeDkuI+bcZhh
-            c6+7AmTY3TLCLxjyYOkSnh+U6uce1TjXX4VS1eFYk9yzuPdy/i+BWQ==
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSA1bG04VDlRM3h5N3pySTF4
+            R3RWU3htY1haQ3ErK3ZRNFZCVUd2Mmo4SVUwCmt5WGFWR3R3aUd2cnN5VTNSWVQw
+            R3dCek9KbmZ1Szh1RnBVNHhlelBiamMKLS0tIEQxbW5jWDk5S1c3WUxneFFQYS8x
+            R2FhZUViaytETmRpWVVKRVc4UUFkWDAKwAbct+yQItG3dbauY5+9ZBtQF5Q8Biz7
+            tFTc8Tjzpshazv6TDLDorqc5WpfVipsY/ML9/Sym9VL1JkszUcMWtA==
             -----END AGE ENCRYPTED FILE-----
           recipient: age1awn52s00phd36c044m52wxxgsw4vndtmpn8ft5vprnagz70gnqqq28w9jn
     encrypted_regex: ^(password|secret|api_key|token|private_key)$
-    lastmodified: "2026-08-03T19:46:35Z"
-    mac: ENC[AES256_GCM,data:51KDjV60y6Oz6q1AZ+jczSwPy+mHPke3w3ASfz7BtqDHovevan2U5DuP2EpXiQLuwagOeOMZzIgUvX5bfXwGpJjVGo1CfgqjTL4JBsRW0qECGUGgnY4oyFrLpFKJkFBAnARBvSrtwk+F10fBe/wmTGfknA9/zy870z+nRJKy9Vk=,iv:9CL2md+xcH8/AXfZFsPpWBt2wcyw0PYp0rVZfYXnfZg=,tag:8a5Yc1+CfTQm6qBVwOoRXw==,type:str]
+    lastmodified: "2026-08-03T19:48:59Z"
+    mac: ENC[AES256_GCM,data:FeWEEzwBjtg6uzVN2HnMZAGjlO4u27HwQX4t0b4TMVpllDGC2B8oFdWAdTbcFawgI6jGUpbSM3UZBTHmkraToJghvYD2v6iBB2MQwX6fCIr30heSOxej4Or6qyYTGvpU2TZSlM8EbodYGhqI99adyVABVfAdCEP2NO0CuAt1DhI=,iv:1VUdXkXjoxoGTAqeHhiCZ8m0Z0pATs8QUSfSW3SwJ14=,tag:vJlTrGAhlLbGtaN5dXBeeA==,type:str]
     version: 3.13.2
