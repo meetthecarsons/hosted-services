@@ -1,0 +1,43 @@
+services:
+  librofm-downloader:
+    image: ghcr.io/burntcookie90/librofm-downloader:latest
+    container_name: librofm-downloader
+    network_mode: service:tailscale  # Share network with Tailscale container for localhost access
+    user: "2000:2000"  # apps service user (matches NFS/mergerfs mount ownership)
+    environment:
+      - LIBRO_FM_USERNAME=${LIBRO_FM_USERNAME}
+      - LIBRO_FM_PASSWORD=${LIBRO_FM_PASSWORD}
+      - FORMAT=${FORMAT:-M4B_MP3_FALLBACK}
+      - SYNC_INTERVAL=${SYNC_INTERVAL:-h}
+      - PARALLEL_COUNT=${PARALLEL_COUNT:-1}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - RENAME_CHAPTERS=${RENAME_CHAPTERS:-true}
+      - WRITE_TITLE_TAG=${WRITE_TITLE_TAG:-true}
+      - PATH_PATTERN=${PATH_PATTERN:-FIRST_AUTHOR/BOOK_TITLE}
+    volumes:
+      - ${LIBROFM_DATA}:/data
+      - ${LIBROFM_MEDIA}:/media
+    restart: unless-stopped
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: librofm-downloader-ts
+    hostname: librofm  # Hostname for this node on the tailnet
+    restart: unless-stopped
+    environment:
+      - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
+      - TS_EXTRA_ARGS=--advertise-tags=tag:containers
+      - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
+      - TS_SERVE_CONFIG=/config/serve.json
+    volumes:
+      - librofm-downloader-ts:/var/lib/tailscale  # Persistent state
+      - /dev/net/tun:/dev/net/tun  # Required for Tailscale
+      - ./ts-serve.json:/config/serve.json:ro
+    ports:
+      - "${LIBROFM_PORT}:8080"  # allow direct LAN clients to reach the web UI
+    cap_add:
+      - NET_ADMIN  # Required for Tailscale to manage network interfaces
+
+volumes:
+  librofm-downloader-ts:
+    driver: local
