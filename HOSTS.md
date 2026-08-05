@@ -10,11 +10,13 @@ Stacks on tardis run from deployed copies under `/opt/stacks/<stack>` (see
 tardis (ds-s-01, 192.168.60.80 / tailnet "tardis")
   - arrgh-proton      # gluetun VPN + qbittorrent + *arr download suite (incl. listenarr, audiobooks)
   - audiobookshelf    # audiobook library + progress sync (tailnet "audiobooks")
+  - bandcampsync      # polls Bandcamp account, downloads new purchases into the music library; no sidecar, no UI
   - librofm-downloader # polls Libro.fm account, downloads new purchases into the audiobooks library (tailnet "librofm")
   - glance            # dashboard (tailnet "glance")
   - immich            # photos (tailnet "photos")
   - jellyfin          # media server (tailnet "jelly")
   - monitoring        # prometheus + grafana + alertmanager + ntfy bridge + cadvisor + node_exporter (tailnet "graf")
+  - navidrome         # music library, Subsonic API (tailnet "music")
   - syncthing         # phone-to-tardis file sync (audiobook downloads, SMS/MMS backup); no sidecar, bound to tardis's own tailnet address
   - vaultwarden       # password manager (tailnet "vault")
 

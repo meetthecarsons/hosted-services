@@ -1,0 +1,37 @@
+services:
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    network_mode: service:tailscale  # Share network with Tailscale container for localhost access
+    user: "2000:2000"  # apps service user (matches NFS/mergerfs mount ownership)
+    environment:
+      - ND_SCANSCHEDULE=${ND_SCANSCHEDULE:-1h}
+      - ND_LOGLEVEL=${ND_LOGLEVEL:-info}
+      - ND_SESSIONTIMEOUT=${ND_SESSIONTIMEOUT:-24h}
+    volumes:
+      - ${NAVIDROME_DATA}:/data
+      - ${NAVIDROME_MUSIC}:/music:ro
+    restart: unless-stopped
+
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: navidrome-ts
+    hostname: music  # Hostname for this node on the tailnet
+    restart: unless-stopped
+    environment:
+      - TS_AUTH_KEY=${TS_AUTH_KEY}  # Tailscale auth key for auto-login
+      - TS_EXTRA_ARGS=--advertise-tags=tag:containers
+      - TS_STATE_DIR=/var/lib/tailscale  # Persistent state directory
+      - TS_SERVE_CONFIG=/config/serve.json
+    volumes:
+      - navidrome-ts:/var/lib/tailscale  # Persistent state
+      - /dev/net/tun:/dev/net/tun  # Required for Tailscale
+      - ./ts-serve.json:/config/serve.json:ro
+    ports:
+      - "${NAVIDROME_PORT}:4533"  # allow direct LAN clients to reach Navidrome
+    cap_add:
+      - NET_ADMIN  # Required for Tailscale to manage network interfaces
+
+volumes:
+  navidrome-ts:
+    driver: local

@@ -1,0 +1,15 @@
+services:
+  bandcampsync:
+    image: ghcr.io/meeb/bandcampsync:latest
+    container_name: bandcampsync
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID:-2000} # apps service user (override in .env)
+      - PGID=${PGID:-2000}
+      - RUN_DAILY_AT=${RUN_DAILY_AT:-3}
+      - FORMAT=${FORMAT:-flac}
+      - NOTIFY_URL=${NOTIFY_URL:-}
+    volumes:
+      - ${BANDCAMPSYNC_CONFIG}:/config
+      - ${BANDCAMPSYNC_DOWNLOADS}:/downloads
+    restart: unless-stopped
