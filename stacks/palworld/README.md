@@ -16,8 +16,10 @@ reboot — no custom scripting needed for either.
   `MEM_LIMIT` (compose.yaml's `mem_limit`) is a Docker-level backstop in
   case usage climbs faster than the daily cycle handles — if hit, the
   container gets OOM-killed and `restart: unless-stopped` brings it back.
-- `RCON_PORT` is `25576`, not the image's default `25575` — that port is
-  already taken by `minecraft-java`'s RCON on the same host.
+- `RCON_PORT` is `8221`, not the image's default `25575` — that port is
+  taken by `minecraft-java`'s RCON on the same host, and `8221` groups it
+  with palworld's own port range (game/query/REST API all in the 8200s)
+  instead of the Minecraft-server RCON numbering.
 - `BACKUP_ENABLED` is on by default in the image; `DELETE_OLD_BACKUPS` and
   `OLD_BACKUP_DAYS` are overridden here to prune after 14 days instead of
   the image's default 30, to bound disk use on `${DATA_DIR}`.
