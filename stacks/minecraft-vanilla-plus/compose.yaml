@@ -1,0 +1,26 @@
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    pull_policy: always
+    restart: unless-stopped
+    environment:
+      EULA: "TRUE"
+      TYPE: "FABRIC"
+      VERSION: ${VERSION}
+      SEED: ${SEED}
+      DIFFICULTY: ${DIFFICULTY}
+      MODE: ${MODE}
+      MAX_PLAYERS: ${MAX_PLAYERS}
+      OPS: ${OPS}
+      WHITELIST: ${WHITELIST}
+      INIT_MEMORY: ${INIT_MEMORY}
+      MAX_MEMORY: ${MAX_MEMORY}
+      ENABLE_RCON: "true"
+      RCON_PASSWORD: ${RCON_PASSWORD}
+    ports:
+      - "25566:25565"
+      - "25576:25575"
+    volumes:
+      - ${DATA_DIR}:/data
+    stdin_open: true
+    tty: true
