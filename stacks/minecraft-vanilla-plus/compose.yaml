@@ -6,6 +6,8 @@ services:
     environment:
       EULA: "TRUE"
       TYPE: "FABRIC"
+      MODRINTH_PROJECTS: "fabric-api,lithium,ferrite-core,hibernate-fabric"
+      PAUSE_WHEN_EMPTY_SECONDS: "0"
       VERSION: ${VERSION}
       SEED: ${SEED}
       DIFFICULTY: ${DIFFICULTY}

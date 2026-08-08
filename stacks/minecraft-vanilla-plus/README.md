@@ -11,6 +11,25 @@ The world save goes in `${DATA_DIR}/world` — for a host inheriting an
 existing world, place it there before first `docker compose up -d` so the
 image loads it instead of generating a new one from `SEED`.
 
+## Mods
+
+`MODRINTH_PROJECTS` auto-installs, on every container start, whatever the
+newest build compatible with `TYPE`/`VERSION` is at the time — no manual
+jar management:
+
+- [`fabric-api`](https://modrinth.com/mod/fabric-api) — required by the mods below, no effect on its own.
+- [`lithium`](https://modrinth.com/mod/lithium) — general server-side performance optimizations, no gameplay changes.
+- [`ferrite-core`](https://modrinth.com/mod/ferrite-core) — reduces memory usage.
+- [`hibernate-fabric`](https://modrinth.com/mod/hibernate-fabric) — puts the server to sleep (near-zero CPU) when no players are online, resumes on the next connection attempt. `PAUSE_WHEN_EMPTY_SECONDS=0` disables the image's own vanilla pause-when-empty so the two don't conflict, per the mod's own setup instructions.
+
+All four are server-side only (verified via each project's Modrinth
+`client_side`/`server_side` metadata) — players connect with a stock
+client, no client-side install needed.
+
+[`starlight`](https://modrinth.com/mod/starlight) (light-engine rewrite,
+usually the biggest perf win of this family) has no build for this
+server's Minecraft version yet — add it once one exists.
+
 ## Datapacks
 
 `scripts/update-datapacks.sh` installs a fixed set of Vanilla Tweaks
