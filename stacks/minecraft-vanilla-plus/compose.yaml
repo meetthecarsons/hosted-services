@@ -8,7 +8,6 @@ services:
       TYPE: "FABRIC"
       MODRINTH_MODPACK: "https://modrinth.com/modpack/hermitcraft"
       MODRINTH_LOADER: "fabric"
-      DATAPACKS: "/data/datapacks"
       VERSION: ${VERSION}
       SEED: ${SEED}
       DIFFICULTY: ${DIFFICULTY}

@@ -26,15 +26,16 @@ so the server no longer disables the image's built-in pause-when-empty —
 
 ## Datapacks
 
-Two independent sources, both landing in `world/datapacks/` additively —
-neither is configured to remove the other's files:
+The modpack's own `overrides/datapacks/` (~25 packs, e.g. wandering trades,
+name formatting station) extract to the container path `/data/datapacks` on
+every start — this is a staging location only, the running world doesn't
+read datapacks from there. Getting them into `world/datapacks/` isn't
+handled by `MODRINTH_MODPACK` itself (the image's `DATAPACKS` env var runs
+*before* the modpack sync populates that path, so pointing it there just
+fails on an empty glob), and several of them duplicate packs already
+installed by Vanilla Tweaks below (e.g. wandering trades, player head
+drops) — not yet reconciled.
 
-- **Pack-bundled**: the modpack's `overrides/datapacks/` (~25 packs, e.g.
-  wandering trades, name formatting station) extract to the container
-  staging path `/data/datapacks` on every start. `DATAPACKS=/data/datapacks`
-  in `compose.yaml` copies them into `world/datapacks/` from there —
-  `REMOVE_OLD_DATAPACKS` is intentionally unset so this never prunes
-  anything it didn't itself install.
 - **Vanilla Tweaks**: `scripts/update-datapacks.sh` installs a fixed set of
   Vanilla Tweaks datapacks (edit the list in the script to change it) and
   restarts the container to apply. Vanilla Tweaks has no static per-pack
