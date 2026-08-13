@@ -6,8 +6,9 @@ services:
     environment:
       EULA: "TRUE"
       TYPE: "FABRIC"
-      MODRINTH_PROJECTS: "fabric-api,lithium,ferrite-core,hibernate-fabric"
-      PAUSE_WHEN_EMPTY_SECONDS: "0"
+      MODRINTH_MODPACK: "https://modrinth.com/modpack/hermitcraft"
+      MODRINTH_LOADER: "fabric"
+      DATAPACKS: "/data/datapacks"
       VERSION: ${VERSION}
       SEED: ${SEED}
       DIFFICULTY: ${DIFFICULTY}
