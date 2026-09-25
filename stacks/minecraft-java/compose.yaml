@@ -9,6 +9,8 @@ services:
       VERSION: ${VERSION}
       DIFFICULTY: ${DIFFICULTY}
       MODE: ${MODE}
+      LEVEL: ${LEVEL:-world}
+      LEVEL_TYPE: ${LEVEL_TYPE:-DEFAULT}
       MAX_PLAYERS: ${MAX_PLAYERS}
       OPS: ${OPS}
       WHITELIST: ${WHITELIST}
