@@ -21,7 +21,7 @@ tardis (ds-s-01, 192.168.60.80 / tailnet "tardis")
   - vaultwarden       # password manager (tailnet "vault")
 
 crafty (192.168.60.81 / tailnet "crafty")
-  - minecraft-java         # vanilla Java server, RCON enabled
+  - minecraft-java         # Fabric Java server (WorldEdit, Simple Voice Chat), RCON enabled
   - minecraft-vanilla-plus # personal Fabric server, fixed seed, RCON enabled (ports 25566/25576)
   - makemkv                # disc ripper (rip-only, jlesage/docker-makemkv, auto-rip-on-insert)
   - palworld               # dedicated server + palworld-exporter (Prometheus metrics, not yet scraped)
