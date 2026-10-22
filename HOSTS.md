@@ -8,7 +8,7 @@ Stacks on tardis run from deployed copies under `/opt/stacks/<stack>` (see
 
 ```
 tardis (ds-s-01, 192.168.60.80 / tailnet "tardis")
-  - arrgh-proton      # gluetun VPN + qbittorrent + *arr download suite (incl. listenarr, audiobooks)
+  - arrgh-proton      # gluetun VPN + qbittorrent + *arr download suite (incl. listenarr, audiobooks, a public-tracker prowlarr on :9697)
   - audiobookshelf    # audiobook library + progress sync (tailnet "audiobooks")
   - bandcampsync      # polls Bandcamp account, downloads new purchases into the music library; no sidecar, no UI
   - librofm-downloader # polls Libro.fm account, downloads new purchases into the audiobooks library (tailnet "librofm")

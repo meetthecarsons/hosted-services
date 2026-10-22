@@ -14,6 +14,7 @@ services:
       - "7878:7878"  # Radarr
       - "7879:7879"  # Radarr-anime
       - "9696:9696"  # Prowlarr
+      - "9697:9697"  # Prowlarr-public
       - "6767:6767"  # Bazarr
       - "4545:4545"  # Listenarr
     environment:
@@ -129,6 +130,24 @@ services:
       - gluetun
     restart: unless-stopped
     # PROWLARR: Indexer manager - centralizes torrent tracker accounts for Sonarr/Radarr
+
+  prowlarr-public:
+    image: lscr.io/linuxserver/prowlarr:latest
+    pull_policy: always
+    container_name: prowlarr-public
+    network_mode: "service:gluetun"  # Uses gluetun's VPN network
+
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - PROWLARR__SERVER__PORT=9697  # shares gluetun's network with prowlarr (9696)
+    volumes:
+      - ${APPDATA_DIR}/prowlarr-public/config:/config
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+    # PROWLARR-PUBLIC: Public-tracker indexers only, for manual searches (older/English releases)
 
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
