@@ -21,6 +21,11 @@ scrape_configs:
   - job_name: cadvisor
     static_configs:
       - targets: ['localhost:8085']
+        labels:
+          host: tardis
+      - targets: ['crafty.eland-wyrm.ts.net:8085']
+        labels:
+          host: crafty
 
   - job_name: frigate
     metrics_path: /api/metrics

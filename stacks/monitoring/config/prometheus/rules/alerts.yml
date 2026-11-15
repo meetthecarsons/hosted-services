@@ -62,18 +62,19 @@ groups:
       # "last_seen is old" never evaluates true — instead compare what
       # cAdvisor reported an hour ago against what it reports now. A
       # deliberately removed container alerts, then self-resolves once the
-      # hour window passes. Suppressed while cAdvisor itself is unscrapeable
-      # (that case is CadvisorDown's job).
+      # hour window passes. Matched per cAdvisor instance, so the same name on
+      # two hosts is tracked separately, and suppressed only for a host whose
+      # cAdvisor is itself unscrapeable (that case is CadvisorDown's job).
       - alert: ContainerGone
         expr: >-
-          count by (name) (container_last_seen{name!=""} offset 1h)
-            unless count by (name) (container_last_seen{name!=""})
-            unless on () (up{job="cadvisor"} == 0)
+          count by (instance, name) (container_last_seen{name!=""} offset 1h)
+            unless count by (instance, name) (container_last_seen{name!=""})
+            unless on (instance) (up{job="cadvisor"} == 0)
         for: 5m
         labels:
           severity: warning
         annotations:
-          summary: "container {{ $labels.name }} has disappeared"
+          summary: "container {{ $labels.name }} has disappeared from {{ $labels.instance }}"
           description: >-
             Reporting to cAdvisor an hour ago, gone for 5+ minutes now.
             Resolves on its own if the removal was deliberate.
@@ -84,4 +85,4 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "cAdvisor is down — container alerting is blind"
+          summary: "cAdvisor on {{ $labels.instance }} is down — container alerting is blind there"

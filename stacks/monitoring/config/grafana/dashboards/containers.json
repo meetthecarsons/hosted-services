@@ -5,7 +5,7 @@
     "docker"
   ],
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "editable": true,
   "refresh": "30s",
   "time": {
@@ -20,6 +20,32 @@
         "type": "datasource",
         "query": "prometheus",
         "current": {}
+      },
+      {
+        "name": "host",
+        "label": "Host",
+        "type": "query",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "query": {
+          "query": "label_values(container_last_seen, host)",
+          "refId": "host"
+        },
+        "refresh": 2,
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        }
       }
     ]
   },
@@ -44,7 +70,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "count(time() - container_last_seen{name!=\"\"} < 60)",
+          "expr": "count(time() - container_last_seen{name!=\"\",host=~\"$host\"} < 60)",
           "refId": "A",
           "instant": true,
           "range": false
@@ -91,7 +117,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "count(count by (container_label_com_docker_compose_project) (time() - container_last_seen{name!=\"\",container_label_com_docker_compose_project!=\"\"} < 60))",
+          "expr": "count(count by (host, container_label_com_docker_compose_project) (time() - container_last_seen{name!=\"\",host=~\"$host\",container_label_com_docker_compose_project!=\"\"} < 60))",
           "refId": "A",
           "instant": true,
           "range": false
@@ -138,7 +164,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "count(changes(container_start_time_seconds{name!=\"\"}[24h]) > 0)",
+          "expr": "count(changes(container_start_time_seconds{name!=\"\",host=~\"$host\"}[24h]) > 0)",
           "refId": "A",
           "instant": true,
           "range": false
@@ -185,7 +211,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum(container_memory_working_set_bytes{name!=\"\"})",
+          "expr": "sum(container_memory_working_set_bytes{name!=\"\",host=~\"$host\"})",
           "refId": "A",
           "instant": true,
           "range": false
@@ -232,7 +258,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "max by (name, image, container_label_com_docker_compose_project, container_label_com_docker_compose_service) (time() - container_start_time_seconds{name!=\"\"})",
+          "expr": "label_join(max by (host, name, image, container_label_com_docker_compose_project, container_label_com_docker_compose_service) (time() - container_start_time_seconds{name!=\"\",host=~\"$host\"}), \"key\", \"/\", \"host\", \"name\")",
           "refId": "A",
           "instant": true,
           "range": false,
@@ -243,7 +269,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (name) (rate(container_cpu_usage_seconds_total{name!=\"\"}[5m]))",
+          "expr": "max by (key) (label_join(sum by (host, name) (rate(container_cpu_usage_seconds_total{name!=\"\",host=~\"$host\"}[5m])), \"key\", \"/\", \"host\", \"name\"))",
           "refId": "B",
           "instant": true,
           "range": false,
@@ -254,7 +280,7 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (name) (container_memory_working_set_bytes{name!=\"\"})",
+          "expr": "max by (key) (label_join(sum by (host, name) (container_memory_working_set_bytes{name!=\"\",host=~\"$host\"}), \"key\", \"/\", \"host\", \"name\"))",
           "refId": "C",
           "instant": true,
           "range": false,
@@ -265,7 +291,7 @@
         {
           "id": "joinByField",
           "options": {
-            "byField": "name",
+            "byField": "key",
             "mode": "outer"
           }
         },
@@ -276,18 +302,21 @@
               "Time": true,
               "Time 1": true,
               "Time 2": true,
-              "Time 3": true
+              "Time 3": true,
+              "key": true
             },
             "indexByName": {
-              "name": 0,
-              "container_label_com_docker_compose_project": 1,
-              "container_label_com_docker_compose_service": 2,
-              "image": 3,
-              "Value #A": 4,
-              "Value #B": 5,
-              "Value #C": 6
+              "host": 0,
+              "name": 1,
+              "container_label_com_docker_compose_project": 2,
+              "container_label_com_docker_compose_service": 3,
+              "image": 4,
+              "Value #A": 5,
+              "Value #B": 6,
+              "Value #C": 7
             },
             "renameByName": {
+              "host": "Host",
               "name": "Container",
               "container_label_com_docker_compose_project": "Stack",
               "container_label_com_docker_compose_service": "Service",
@@ -302,6 +331,9 @@
           "id": "sortBy",
           "options": {
             "sort": [
+              {
+                "field": "Host"
+              },
               {
                 "field": "Stack"
               },
@@ -378,9 +410,9 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (container_label_com_docker_compose_project) (rate(container_cpu_usage_seconds_total{name!=\"\"}[5m]))",
+          "expr": "sum by (host, container_label_com_docker_compose_project) (rate(container_cpu_usage_seconds_total{name!=\"\",host=~\"$host\"}[5m]))",
           "refId": "A",
-          "legendFormat": "{{container_label_com_docker_compose_project}}"
+          "legendFormat": "{{host}} {{container_label_com_docker_compose_project}}"
         }
       ],
       "fieldConfig": {
@@ -410,9 +442,9 @@
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "expr": "sum by (container_label_com_docker_compose_project) (container_memory_working_set_bytes{name!=\"\"})",
+          "expr": "sum by (host, container_label_com_docker_compose_project) (container_memory_working_set_bytes{name!=\"\",host=~\"$host\"})",
           "refId": "A",
-          "legendFormat": "{{container_label_com_docker_compose_project}}"
+          "legendFormat": "{{host}} {{container_label_com_docker_compose_project}}"
         }
       ],
       "fieldConfig": {

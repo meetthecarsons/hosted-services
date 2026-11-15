@@ -34,8 +34,10 @@ topic, `docker compose up -d` re-renders it.
 
 Grafana dashboards are provisioned from `config/grafana/dashboards/` (file
 provider, read-only in the UI; edit the JSON and redeploy). `containers.json`
-is the "what's running" view built on cadvisor: running containers, stacks,
-24h restarts, and a per-container table of uptime, CPU and memory. It picks
+is the "what's running" view built on cadvisor (tardis's own plus the `cadvisor`
+stack on crafty, told apart by the `host` target label): running containers,
+stacks, 24h restarts, and a per-container table of uptime, CPU and memory,
+filterable by host. It picks
 the Prometheus data source with a dashboard variable, so no data source UID is
 baked in.
 

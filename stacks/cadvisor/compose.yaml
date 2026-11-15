@@ -1,0 +1,22 @@
+# Per-container metrics for hosts that have no monitoring stack of their own;
+# Prometheus on tardis scrapes it over the tailnet (see
+# monitoring/config/prometheus/prometheus.yml). tardis runs its own copy inside
+# the monitoring stack.
+services:
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    command:
+      - --port=8085
+      - --docker_only=true
+    ports:
+      - "8085:8085"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+    devices:
+      - /dev/kmsg
+    restart: unless-stopped

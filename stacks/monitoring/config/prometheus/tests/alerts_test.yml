@@ -12,7 +12,7 @@ tests:
   # 1h offset window slides past the removal.
   - interval: 15s
     input_series:
-      - series: 'container_last_seen{name="canary", job="cadvisor"}'
+      - series: 'container_last_seen{name="canary", job="cadvisor", instance="localhost:8085"}'
         values: '1x240'
       - series: 'up{job="cadvisor", instance="localhost:8085"}'
         values: '1x560'
@@ -22,9 +22,10 @@ tests:
         exp_alerts:
           - exp_labels:
               name: canary
+              instance: localhost:8085
               severity: warning
             exp_annotations:
-              summary: "container canary has disappeared"
+              summary: "container canary has disappeared from localhost:8085"
               description: >-
                 Reporting to cAdvisor an hour ago, gone for 5+ minutes now.
                 Resolves on its own if the removal was deliberate.
@@ -37,7 +38,7 @@ tests:
   # carries the signal instead.
   - interval: 15s
     input_series:
-      - series: 'container_last_seen{name="canary", job="cadvisor"}'
+      - series: 'container_last_seen{name="canary", job="cadvisor", instance="localhost:8085"}'
         values: '1x240'
       - series: 'up{job="cadvisor", instance="localhost:8085"}'
         values: '1x240 0x240'
@@ -53,7 +54,68 @@ tests:
               instance: localhost:8085
               severity: warning
             exp_annotations:
-              summary: "cAdvisor is down — container alerting is blind"
+              summary: "cAdvisor on localhost:8085 is down — container alerting is blind there"
+
+  # Two hosts, same container name: the one that vanishes is attributed to
+  # its own instance, and the other host's copy keeps it from being masked.
+  - interval: 15s
+    input_series:
+      - series: 'container_last_seen{name="web", job="cadvisor", instance="localhost:8085"}'
+        values: '1x240'
+      - series: 'container_last_seen{name="web", job="cadvisor", instance="crafty.eland-wyrm.ts.net:8085"}'
+        values: '1x560'
+      - series: 'up{job="cadvisor", instance="localhost:8085"}'
+        values: '1x560'
+      - series: 'up{job="cadvisor", instance="crafty.eland-wyrm.ts.net:8085"}'
+        values: '1x560'
+    alert_rule_test:
+      - eval_time: 70m
+        alertname: ContainerGone
+        exp_alerts:
+          - exp_labels:
+              name: web
+              instance: localhost:8085
+              severity: warning
+            exp_annotations:
+              summary: "container web has disappeared from localhost:8085"
+              description: >-
+                Reporting to cAdvisor an hour ago, gone for 5+ minutes now.
+                Resolves on its own if the removal was deliberate.
+
+  # Only crafty's cAdvisor goes unscrapeable: its containers are suppressed,
+  # but a container that vanishes on tardis still alerts.
+  - interval: 15s
+    input_series:
+      - series: 'container_last_seen{name="canary", job="cadvisor", instance="localhost:8085"}'
+        values: '1x240'
+      - series: 'container_last_seen{name="mc", job="cadvisor", instance="crafty.eland-wyrm.ts.net:8085"}'
+        values: '1x240'
+      - series: 'up{job="cadvisor", instance="localhost:8085"}'
+        values: '1x560'
+      - series: 'up{job="cadvisor", instance="crafty.eland-wyrm.ts.net:8085"}'
+        values: '1x240 0x320'
+    alert_rule_test:
+      - eval_time: 70m
+        alertname: ContainerGone
+        exp_alerts:
+          - exp_labels:
+              name: canary
+              instance: localhost:8085
+              severity: warning
+            exp_annotations:
+              summary: "container canary has disappeared from localhost:8085"
+              description: >-
+                Reporting to cAdvisor an hour ago, gone for 5+ minutes now.
+                Resolves on its own if the removal was deliberate.
+      - eval_time: 75m
+        alertname: CadvisorDown
+        exp_alerts:
+          - exp_labels:
+              job: cadvisor
+              instance: crafty.eland-wyrm.ts.net:8085
+              severity: warning
+            exp_annotations:
+              summary: "cAdvisor on crafty.eland-wyrm.ts.net:8085 is down — container alerting is blind there"
 
   # A node_exporter target going dark for 4+ minutes fires HostDown.
   - interval: 15s

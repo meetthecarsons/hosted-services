@@ -25,6 +25,7 @@ crafty (192.168.60.81 / tailnet "crafty")
   - minecraft-vanilla-plus # personal Fabric server, fixed seed, RCON enabled (ports 25566/25576)
   - makemkv                # disc ripper (rip-only, jlesage/docker-makemkv, auto-rip-on-insert)
   - palworld               # dedicated server + palworld-exporter (Prometheus metrics, not yet scraped)
+  - cadvisor               # per-container metrics on :8085, scraped by tardis Prometheus (host label "crafty")
 ```
 
 Not deployed anywhere right now (repo definitions only):
