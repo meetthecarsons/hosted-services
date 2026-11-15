@@ -14,7 +14,7 @@ services:
     container_name: immich_server
     # Version is pinned here (not via .env) so upgrades are explicit commits.
     # Keep in sync with immich-machine-learning below; read release notes first.
-    image: ghcr.io/immich-app/immich-server:v3.0.1
+    image: ghcr.io/immich-app/immich-server:v3.4.1
     network_mode: service:immich-ts
     volumes:
       # Do not edit the next line. If you want to change the media storage location on your system, edit the value of UPLOAD_LOCATION in the .env file
@@ -37,7 +37,7 @@ services:
     # -openvino variant + /dev/dri enables Intel Quick Sync hw accel for
     # facial recognition / smart search (CLIP). See
     # https://docs.immich.app/features/ml-hardware-acceleration
-    image: ghcr.io/immich-app/immich-machine-learning:v3.0.1-openvino
+    image: ghcr.io/immich-app/immich-machine-learning:v3.4.1-openvino
     network_mode: service:immich-ts
     volumes:
       - model-cache:/cache
