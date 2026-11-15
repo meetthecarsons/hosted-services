@@ -39,7 +39,9 @@ stack on crafty, told apart by the `host` target label): running containers,
 stacks, 24h restarts, and a per-container table of uptime, CPU and memory,
 filterable by host. It picks
 the Prometheus data source with a dashboard variable, so no data source UID is
-baked in.
+baked in. The `Alertmanager` data source is provisioned from
+`config/grafana/provisioning/datasources/` so Grafana can show and silence
+Alertmanager's alerts; alert rules themselves stay in Prometheus.
 
 ## First deploy
 
