@@ -30,6 +30,15 @@ service renders the real config into a named volume at `up`, reading
 `NTFY_ALERTS_TOPIC` from the env (`.env` ← `.env.sops`). After changing the
 topic, `docker compose up -d` re-renders it.
 
+## Dashboards
+
+Grafana dashboards are provisioned from `config/grafana/dashboards/` (file
+provider, read-only in the UI; edit the JSON and redeploy). `containers.json`
+is the "what's running" view built on cadvisor: running containers, stacks,
+24h restarts, and a per-container table of uptime, CPU and memory. It picks
+the Prometheus data source with a dashboard variable, so no data source UID is
+baked in.
+
 ## First deploy
 
 1. Add `NTFY_ALERTS_TOPIC` to `.env.sops` (`make sops-decrypt` / edit /
