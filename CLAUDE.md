@@ -14,10 +14,6 @@ needs, and the repo itself is just the source of truth for their config.
 - `stacks/<name>/` — one self-contained Compose stack per service
   (`compose.yaml`, `.env.example`, optional `README.md`, service-specific
   config). See `stacks/<name>/README.md` for service-specific quirks.
-- `steward/<hostname>/` — per-host deployment of
-  [stack-agent](https://github.com/rcarson/stack-agent), a daemon that polls
-  this repo and reconciles that host's stacks automatically. See
-  `steward/README.md`.
 - `HOSTS.md` — handwritten, current mapping of which stack runs on which
   host. Purely informational; not read by any automation. Update it whenever
   a stack is added, removed, or moved.
@@ -26,20 +22,20 @@ needs, and the repo itself is just the source of truth for their config.
 
 ## Deploy model — read before changing Compose files
 
-Running stacks live in deployed copies (typically under `/opt/stacks/<name>`
-on `tardis`, or wherever `steward/<hostname>/config.yml` points), **not** in
-the repo checkout itself. `git pull` never mutates a running service.
+Running stacks live in deployed copies under `/opt/stacks/<name>`, **not** in
+the repo checkout itself. `git pull` never mutates a running service. Changes
+reach a host only through a manual deploy, run on that host from its checkout
+(`~/hosted-services`):
 
-Two ways changes reach a host:
-1. **Manual**: `make deploy SERVICE=<name>` — rsyncs the stack directory to
-   the deploy root, decrypts `.env.sops` -> `.env` (chmod 600) if present,
-   then `docker compose up -d --remove-orphans`. Use `make deploy-diff
-   SERVICE=<name>` first to preview the rsync with no writes.
-2. **Automatic**: `steward/<hostname>` runs stack-agent, which polls this
-   repo's HEAD and reconciles the stacks listed in its `config.yml`.
+`make deploy SERVICE=<name>` — rsyncs the stack directory to the deploy root,
+decrypts `.env.sops` -> `.env` (chmod 600) if present, then `docker compose up
+-d --remove-orphans`. Use `make deploy-diff SERVICE=<name>` first to preview
+the rsync with no writes. Decryption needs `SOPS_AGE_KEY_FILE` exported (a
+non-interactive SSH session does not load it from `~/.bashrc`).
 
-Check `HOSTS.md` to know which mode applies to a given host before assuming
-a Compose edit takes effect immediately.
+Bind-mounted config (for example Prometheus rules) is picked up by the
+container only after a restart; `make deploy` recreates a service only when
+its compose definition changes.
 
 ## Secrets (SOPS + age)
 
