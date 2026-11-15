@@ -6,11 +6,16 @@ A `.env` file should provide:
 
 ```
 UPLOAD_LOCATION=/opt/data/library
-IMMICH_VERSION=release
 DB_PASSWORD=postgres
 DB_USERNAME=postgres
 DB_DATABASE_NAME=immich
 ```
+
+The Immich version is pinned in `compose.yaml` (both the server and
+machine-learning images), not in `.env`. To upgrade, read the
+[release notes](https://github.com/immich-app/immich/releases), back up
+Postgres, bump both tags, then deploy. Migrations are one-way, so there is no
+rolling back without a DB restore.
 
 Change values as needed; the example `.env` in this repo is a good starting point.
 
